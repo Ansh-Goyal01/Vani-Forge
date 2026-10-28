@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@theme {
+  --color-alu: #e7e5e0;
+  --color-ink: #111111;
+  --color-signal: #ff4f12;
+  --color-graphite: #181818;
+  --color-paper: #f2f0eb;
+  --color-mute: #5d5b57;
+  --font-head: "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --radius-sq: 5px;
+}
+
+html,
+body {
+  background: var(--color-alu);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-head);
+  letter-spacing: -0.03em;
+}
+
+.rule {
+  border: 1.5px solid var(--color-ink);
+}
+.rule-b {
+  border-bottom: 1.5px solid var(--color-ink);
+}
+.label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.btn {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 1.5px solid var(--color-ink);
+  border-radius: var(--radius-sq);
+  padding: 10px 16px;
+  background: transparent;
+  cursor: pointer;
+}
+.btn:hover:not(:disabled) {
+  background: var(--color-ink);
+  color: var(--color-alu);
+}
+.btn-primary {
+  background: var(--color-signal);
+  color: var(--color-ink);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-ink);
+  color: var(--color-signal);
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.field {
+  width: 100%;
+  background: var(--color-paper);
+  border: 1.5px solid var(--color-ink);
+  border-radius: var(--radius-sq);
+  padding: 10px 12px;
+  font-size: 15px;
+}
+.field:focus {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 1px;
+}
+.panel-dark {
+  background: var(--color-graphite);
+  color: #e7e5e0;
+  border-radius: var(--radius-sq);
+}
+@keyframes bar {
+  0%, 100% { transform: scaleY(0.25); }
+  50% { transform: scaleY(1); }
+}
