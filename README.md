@@ -60,6 +60,8 @@ flowchart LR
 
 Storage is JSON files under `data/` (git-ignored): `agents/<id>/v1.json...`, `meta.json`, `chaos/<id>/<run>.json`, `audio/<hash>.pcm` (cached persona TTS), `cache/compile/`, `settings.json`.
 
+The UI uses an editorial mauve/plum/terracotta design language (see section 7 of `CLAUDE.md`); fonts are bundled in `src/fonts/`. To use a photographic hero, add `public/hero/hero-object.png` (see `public/hero/README.md`); otherwise a line-art microphone is shown.
+
 Key files: `src/lib/voiceir.ts` (schema), `compile.ts` (pure VoiceIR to agent config), `llm.ts` (all Gemini calls), `eleven.ts` (all ElevenLabs calls), `personas.ts`, `chaos.ts`, `text-chaos.ts`, `audio-chaos.ts`, `heal.ts`, `credits.ts` (guard), `patch.ts` and `versions.ts` (JSON Patch and undo).
 
 ## ElevenLabs capabilities used and where

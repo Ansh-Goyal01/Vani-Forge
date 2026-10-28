@@ -125,12 +125,17 @@ Stretch inside M1 only if it takes under two hours: compile the pain-to-transfer
 - `VERIFY.md`: a numbered checklist of every check that needs keys, with the exact command, expected result, and the credit cost of each step.
 - Empty, loading and error states everywhere.
 
-## 7. UI design language ("Swiss Acoustic Industrial")
+## 7. UI design language ("Editorial Mauve")
 
-- Background `#E7E5E0` (brushed aluminium grey), ink `#111111`, accent `#FF4F12` (signal orange), graphite panels `#181818`, rules 1.5px solid ink. Fonts: Inter Tight (headings, tight tracking), Inter (body), JetBrains Mono (labels, specs, X-Ray). Large orange section numbers, mono uppercase small labels, strict grid, square-ish corners (4-6px), generous whitespace. No purple gradients, no glassmorphism, no emoji.
-- The app header shows the product name, the credits badge, and a thin horizontal 20 Hz to 20 kHz ruler as a decorative element.
-- Voice and transcript panels use graphite panels with orange waveform bars.
-- Every screen must be usable by a first-time, non-technical user without instructions.
+This replaces the earlier "Swiss Acoustic Industrial" look (brushed grey, signal orange, graphite, mono labels, a Hz ruler). **Do not bring those looks back.**
+
+- **Palette (only these three, plus tints derived from them):** Dusty Mauve `#C9A0A7` page background; Deep Plum `#3A0F34` text, primary buttons, dark sections and line art; Terracotta `#C75A3A` for accent shapes (medallion, live indicators, markers) and for problems (failed promises, errors). Derived: blush `#E6CCD0` cards, shell `#F2E4E5` light panels and inputs, mauve-deep `#B98990` dividers, secondary text `#4D2142`, small problem text `#803437`. Never use terracotta for small text on mauve, blush or shell; use it for shapes and large text, or put the words in plum and mark the problem with a terracotta dot. Kept/success is plum with a check mark; failure is terracotta. Contrast is WCAG AA or better.
+- **Paper grain** (static SVG noise, about 6%) and a very soft vignette over the whole page.
+- **Fonts, bundled in `src/fonts/` and loaded with `next/font/local` (no Google Fonts request):** Bodoni Moda for the giant vertical word, headlines (uppercase, tight tracking), big numerals and card titles; Jost for body text and for tiny uppercase tracked labels (11 to 12px, about 0.18em) used in navigation, buttons and captions; JetBrains Mono only for X-Ray panels, latency and code.
+- **Landing hero:** a vertical Bodoni "VOICE" up the left edge (reads bottom to top), a large hero object in the centre with plum line-art cloud swirls behind it, an uppercase headline on the right with a small subline and a plum pill button, and a terracotta medallion (leaf whose veins form a sound wave) in the corner. The hero object is `public/hero/hero-object.png` if present, otherwise an inline-SVG line-art studio microphone (decided on the server). Navigation is tiny uppercase tracked links with outline pills for credits and "Open studio".
+- **Components:** pill buttons (plum fill for the primary action), outline pills for secondary actions, rounded blush cards, a printed "menu card" (blush, thin double plum rule, dotted leader lines) for the brief and promise sheet, plum panels for the call console and transcripts. Call visuals are thin concentric terracotta and mauve rings driven by the real output audio level, with no glow. The React Flow graph uses blush nodes, plum borders and terracotta edges.
+- **Motion:** one load sequence only (the word rises in, the image fades up, the clouds drift in), then only a very slow cloud drift (20 s or slower). Respect `prefers-reduced-motion`: no motion at all.
+- One primary action per screen, visible keyboard focus everywhere, alt text on images. Technical detail (VoiceIR JSON, event logs, patches) lives in collapsible "X-Ray" panels. Every screen must be usable by a first-time, non-technical user without instructions.
 
 ## 8. Testing and quality
 

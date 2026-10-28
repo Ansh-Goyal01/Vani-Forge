@@ -57,3 +57,16 @@ Ambiguities in `CLAUDE.md` and the simplest reasonable call made for each. Newes
 39. **`npm run seed`** uses the Smile Dental fixture with the first listed voice (not Gemini), so it works even when Gemini is rate-limited. It runs the text tier only; audio is left to the owner because it costs real call time.
 40. **M3 and M4 were committed together** because the Studio tabs, `eleven.ts` and the docs span both.
 41. **Empty, loading and error states:** every list and tab has an explicit empty message, API errors become plain sentences (`src/lib/api.ts`), and `error.tsx`, `not-found.tsx` and `loading.tsx` cover the app shell.
+
+## Redesign (editorial mauve)
+
+42. **Behaviour untouched.** Only components, CSS and static assets changed. Every API route, the write flow, promise sheet, voice picker, studio tabs, credit guard and the public page work as before; the 50 unit tests still pass.
+43. **Secondary text is plum at 85%, not 70%.** The brief says plum-70, but that measures 3.98:1 on mauve and fails WCAG AA. `#4D2142` gives 5.4:1. Small "problem" text on blush uses terracotta mixed 50/50 with plum (`#803437`, 5.5:1), because pure terracotta on blush is only about 3.4:1; the terracotta shows up as a dot or bar next to it. Success is plum with a check; failure is terracotta shape plus dark text, so meaning never rests on colour alone.
+44. **Fonts are bundled** (`src/fonts/*.ttf`, loaded with `next/font/local`): Bodoni Moda, Jost and JetBrains Mono, all OFL from `google/fonts`. The Google Fonts `<link>` is gone. This supersedes decision 2.
+45. **Tokens were renamed**, not aliased: `mauve`, `plum`, `terracotta`, `blush`, `shell`, `mute`, `problem`. The old `alu`, `ink`, `signal`, `graphite`, `paper` names no longer exist.
+46. **The vertical word rotates on a wrapper**, not on the animated element, because the rise-in animation's `transform` would otherwise override the rotation.
+47. **Hero object is decided on the server** with `fs.existsSync("public/hero/hero-object.png")`. The file was **not** present, so the inline-SVG microphone is shown. `public/hero/README.md` describes the asset.
+48. **The "Testing" example on the landing page is illustrative** (Parso saadhe chaar baje, "Paris", "haan ji") and labelled "An example of what testing catches. Not a real call." This is the one place static example content appears; it is a labelled illustration, not a result.
+49. **The brief mentioned a rotating example behind the empty text box with "Use this example".** That control did not exist in the current write flow, which has example cards and use-case starters instead. Those were kept and restyled; no new behaviour was added.
+50. **The header is global and uses one nav everywhere**, with anchors (`/#how`, `/#proof`, `/#agents`). "Open studio" goes to `#agents` as specified. The old Hz ruler was removed.
+51. **No new packages.** CSS, inline SVG, `next/image` and existing dependencies only.
