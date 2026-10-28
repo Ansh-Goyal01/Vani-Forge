@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import type { VoiceIR } from "@/lib/voiceir";
 import type { History } from "@/lib/versions";
 import { Notice, SectionNumber, XRay, api } from "../ui";
+import { ChaosTab } from "./ChaosTab";
+import { DeployTab } from "./DeployTab";
+import { ObserveTab } from "./ObserveTab";
 import { FormEditor } from "./FormEditor";
 import { RefineTab } from "./RefineTab";
 import { StateGraph } from "./StateGraph";
@@ -19,12 +22,6 @@ const TABS = [
   { id: "observe", label: "Observe" },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
-
-const LATER: Record<string, string> = {
-  chaos: "Chaos and heal arrive in milestone 3. Nothing is connected yet.",
-  deploy: "Sharing page, embed snippet and phone steps arrive in milestone 4. Not connected yet.",
-  observe: "Call history and summaries arrive in milestone 4. Not connected yet.",
-};
 
 export function Studio({ agentId }: { agentId: string }) {
   const [state, setState] = useState<AgentState | null>(null);
@@ -82,7 +79,9 @@ export function Studio({ agentId }: { agentId: string }) {
           </XRay>
         </div>
       )}
-      {(tab === "chaos" || tab === "deploy" || tab === "observe") && <Notice>{LATER[tab]}</Notice>}
+      {tab === "chaos" && <ChaosTab agentId={agentId} state={state} onState={setState} />}
+      {tab === "deploy" && <DeployTab agentId={agentId} state={state} />}
+      {tab === "observe" && <ObserveTab agentId={agentId} state={state} />}
     </div>
   );
 }

@@ -14,6 +14,7 @@ const SYSTEM = `You edit a voice agent's JSON specification (VoiceIR) by returni
 - persona.firstMessage must always keep saying that the agent is an AI assistant.
 - Promise ids stay stable; new promises need a unique snake_case id and kind must|never|handoff.
 - If the instruction cannot be done, return an empty ops array and explain in summary.
+- To stop backchannel words like "haan ji" interrupting, add them to /speech/interruptionIgnoreTerms; to help recognise names add /speech/asrKeywords. If /speech does not exist yet, add the whole object {"interruptionIgnoreTerms":[],"asrKeywords":[]} with the values.
 - Use only fictional data.`;
 
 export type RefineProposal = { summary: string; ops: RawOp[]; next: VoiceIR | null; error?: string };

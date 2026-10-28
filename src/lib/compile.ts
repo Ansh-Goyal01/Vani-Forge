@@ -100,7 +100,7 @@ export function buildSystemPrompt(ir: VoiceIR, opts: CompileOptions = {}): strin
   return out.join("\n");
 }
 
-function criterionId(promiseId: string): string {
+export function criterionId(promiseId: string): string {
   return promiseId.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "") || "promise";
 }
 
@@ -171,6 +171,13 @@ export function compile(ir: VoiceIR, opts: CompileOptions = {}): AgentPayload {
       modelId: pickTtsModel(ir),
       ...(locators.length > 0 ? { pronunciationDictionaryLocators: locators } : {}),
     },
+    asr: {
+      userInputAudioFormat: "pcm_16000",
+      ...((ir.speech?.asrKeywords.length ?? 0) > 0 ? { keywords: ir.speech!.asrKeywords } : {}),
+    },
+    ...((ir.speech?.interruptionIgnoreTerms.length ?? 0) > 0
+      ? { turn: { interruptionIgnoreTerms: ir.speech!.interruptionIgnoreTerms, mergeWithDefaultIgnoreTerms: true } }
+      : {}),
     conversation: {
       maxDurationSeconds: MAX_CALL_SECONDS,
       clientEvents: [

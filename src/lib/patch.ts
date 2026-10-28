@@ -65,6 +65,9 @@ const FIELD_LABELS: [RegExp, string][] = [
   [/^\/voice\/ttsModel$/, "Voice model"],
   [/^\/knowledge/, "Knowledge"],
   [/^\/lexicon/, "Pronunciation"],
+  [/^\/speech\/interruptionIgnoreTerms/, "Words that should not interrupt"],
+  [/^\/speech\/asrKeywords/, "Words to listen for"],
+  [/^\/speech/, "Speech handling"],
   [/^\/states/, "Conversation step"],
   [/^\/business/, "Business details"],
 ];
