@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "check-env": "tsx scripts/check-env.ts",
-    "smoke": "tsx scripts/smoke.ts"
+    "smoke": "tsx scripts/smoke.ts",
+    "seed": "tsx scripts/seed.ts",
+    "audio-chaos": "tsx scripts/audio-chaos.ts"
   },
   "dependencies": {
     "@elevenlabs/client": "^1.32.0",

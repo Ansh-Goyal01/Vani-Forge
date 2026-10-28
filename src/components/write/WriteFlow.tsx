@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { EXAMPLE_PROMPTS, USE_CASE_STARTERS } from "@/lib/examples";
 import { disclosesAI, type VoiceIRDraft } from "@/lib/voiceir";
 import { Notice, SectionNumber, XRay, api } from "../ui";
+import { AgentList } from "./AgentList";
 import { MicButton } from "./MicButton";
 import { PromiseSheet } from "./PromiseSheet";
 import { VoicePicker } from "./VoicePicker";
@@ -174,6 +175,7 @@ export function WriteFlow() {
           </div>
         </section>
       )}
+      <AgentList />
     </div>
   );
 }

@@ -33,3 +33,27 @@ Ambiguities in `CLAUDE.md` and the simplest reasonable call made for each. Newes
 24. **The form editor sends a full IR** (`PUT /api/agents/[id]`) and creates a new version just like chat.
 25. **Test calls use a signed URL over WebSocket** (`connectionType: "websocket"`) minted by `/api/signed-url`. Latency shown is the SDK's own `onPing` estimate, labelled as an estimate.
 26. **Chaos, Deploy and Observe tabs are visible but say "arrives in milestone 3/4"** and do nothing else. No fake data.
+
+## M3
+
+27. **Text tier uses agent *simulation tests* + `runTests` + invocations**, not the deprecated simulate-conversation endpoint (removed 31 Oct 2026, the day after the finale). One test per persona x promise, created once and reused (ids in `data/chaos/<agent>/tests.json`), each run k = 3 times.
+28. **Per-promise results need one test per (persona, promise)**, because a test returns a single pass/fail. Personas only test the promise *kinds* they target (e.g. the prankster tests "never" promises), which keeps the Smile Dental pass at 7 tests x 3 runs.
+29. **Success conditions** are written from the promise kind and text by `successCondition` in `chaos.ts`; a hand-off promise counts as kept if the situation never arose.
+30. **Audio tier scores come from ElevenLabs conversation analysis**, using the evaluation criteria compiled from the promises (matched by criterion id). No second LLM judge. Calls with no score are marked "no score" and not counted either way.
+31. **Audio tier runs one persona per request** (the UI loops), k = 1, only on the button, blocked by the credit guard. Lines are TTS'd before dialling and cached by hash of voice + model + format + text.
+32. **Persona voices are stock voices chosen by label** (`gender`, `age`), sorted by name for a stable pick. No Voice Design.
+33. **Heal is propose, approve, apply, re-run.** `/api/heal` never saves. Approving calls the normal apply route (new VoiceIR version, note prefixed "Heal:") and then re-runs only that persona on the text tier. The quote must appear in the transcript; otherwise the agent's last line is used.
+34. **VoiceIR gained an optional `speech` block** (`interruptionIgnoreTerms`, `asrKeywords`) that `compile` maps to `turn.interruptionIgnoreTerms` and `asr.keywords`. Pronunciation fixes use the existing `lexicon`. Every agent now also sets `asr.userInputAudioFormat = pcm_16000`.
+35. **Chaos requests block until finished** (up to 300 s) instead of using a job queue. Simple, fine for one user; the UI shows a progress message.
+
+## M4
+
+36. **Widget** loads `https://unpkg.com/@elevenlabs/convai-widget-embed` from the public page and the copy-paste snippet. `/a/[agentId]` is unguarded (public visitors spend credits); this is stated on the Deploy tab.
+37. **Phone is documentation only.** The Deploy tab lists Twilio/Exotel steps with a disabled "Phone: not connected" button.
+38. **Observe totals** come from the latest 30 conversations; "judged successful" counts only calls the platform scored.
+
+## M5
+
+39. **`npm run seed`** uses the Smile Dental fixture with the first listed voice (not Gemini), so it works even when Gemini is rate-limited. It runs the text tier only; audio is left to the owner because it costs real call time.
+40. **M3 and M4 were committed together** because the Studio tabs, `eleven.ts` and the docs span both.
+41. **Empty, loading and error states:** every list and tab has an explicit empty message, API errors become plain sentences (`src/lib/api.ts`), and `error.tsx`, `not-found.tsx` and `loading.tsx` cover the app shell.
