@@ -1,77 +1,101 @@
-import fs from "node:fs";
-import path from "node:path";
 import Image from "next/image";
-import { CloudSwirl, Medallion, MicFallback } from "./art";
 import { BuildButton } from "./BuildButton";
+import { PlateCanvas } from "./PlateCanvas";
 
-const HERO_FILE = path.join(process.cwd(), "public", "hero", "hero-object.png");
+const SPEC = [
+  ["For", "Clinics, shops and studios"],
+  ["Languages", "Hindi · English · Hinglish"],
+  ["Built on", "ElevenLabs agents, voices and speech-to-text"],
+  ["Team", "Short Circuit"],
+] as const;
 
-/** Decided at render time on the server: the photo if the file exists, otherwise the line-art microphone. */
-function HeroObject() {
-  if (fs.existsSync(HERO_FILE)) {
-    return (
-      <Image
-        src="/hero/hero-object.png"
-        alt="A vintage studio microphone in deep plum and terracotta"
-        fill
-        priority
-        sizes="(min-width: 1024px) 36vw, 78vw"
-        className="hero-mask object-contain"
-      />
-    );
-  }
-  return <MicFallback className="absolute inset-0 h-full w-full" />;
+const LOOP = [
+  ["Describe", "in plain words"],
+  ["Break", "with difficult callers"],
+  ["Fix", "with one approval"],
+] as const;
+
+function Screw({ className }: { className: string }) {
+  return (
+    <svg aria-hidden viewBox="0 0 12 12" className={`pointer-events-none absolute h-3 w-3 ${className}`}>
+      <circle cx="6" cy="6" r="5" fill="#2a2a2a" stroke="#5a5955" strokeWidth="0.8" />
+      <path d="M3.2 8.8L8.8 3.2" stroke="#8a8984" strokeWidth="0.9" />
+    </svg>
+  );
 }
 
+/** Title-slide layout from the deck, with a live plate and the product loop in one line. */
 export function Hero() {
+  const word = "VaniForge";
   return (
-    <section id="home" aria-labelledby="hero-title" className="relative overflow-x-clip">
-      <div className="mx-auto grid max-w-[1440px] gap-y-8 px-5 pb-14 pt-2 lg:min-h-[calc(100svh-4.5rem)] lg:grid-cols-[minmax(0,27%)_minmax(0,35%)_minmax(0,1fr)] lg:items-center lg:gap-y-0 lg:px-8 lg:py-0">
-        {/* Left: the word, vertical on desktop */}
-        <div className="relative flex items-center justify-center lg:justify-start">
-          {/* The rotation lives on the outer element so the rise-in animation cannot override it. */}
-          <div aria-hidden className="hero-word-rot">
-            <p className="hero-word anim-rise text-plum">Voice</p>
-          </div>
-          <ul className="label absolute bottom-6 right-0 hidden space-y-3 text-plum lg:block" style={{ right: "-1.5rem" }}>
-            <li>Real callers</li>
-            <li>Hindi + English</li>
-            <li>Fixed before launch</li>
-          </ul>
-        </div>
-
-        {/* Centre: the object, clouds behind it */}
-        <div className="relative z-10 lg:-ml-16">
-          <div className="hero-image-box">
-            <CloudSwirl className="anim-cloud-l absolute -left-[34%] top-[6%] hidden w-[70%] sm:block lg:-left-[24%] lg:w-[58%]" />
-            <CloudSwirl flip className="anim-cloud-r absolute -right-[34%] bottom-[16%] hidden w-[70%] sm:block lg:bottom-auto lg:top-[36%] lg:-right-[20%] lg:w-[44%]" />
-            <div className="anim-fade absolute inset-0">
-              <HeroObject />
-            </div>
-          </div>
-          <ul className="label mt-6 space-y-2 text-center text-plum lg:hidden">
-            <li>Real callers</li>
-            <li>Hindi + English</li>
-            <li>Fixed before launch</li>
-          </ul>
-        </div>
-
-        {/* Right: headline */}
-        <div className="relative z-10 lg:pl-6">
-          <p className="label mb-5 text-plum">For clinics, shops and studios</p>
-          <h1 id="hero-title" className="text-[clamp(2.75rem,5.2vw,5.25rem)] leading-[0.98]">
-            Give your
-            <br />
-            business
-            <br />
-            a voice
+    <section id="home" data-band="63" data-title="Home" aria-labelledby="hero-title" className="pb-20 pt-6 lg:pt-10">
+      <div className="wrap grid items-start gap-12 lg:grid-cols-[1.12fr_1fr] lg:gap-14">
+        <div>
+          <p className="label anim-fade text-ink">VF-01 &nbsp;/&nbsp; No-code voice AI agent builder</p>
+          <h1 id="hero-title" aria-label="VaniForge" className="mt-6 text-[clamp(3.6rem,10.2vw,9rem)] !leading-[0.86] !tracking-[-0.06em]">
+            <span aria-hidden className="whitespace-nowrap">
+              {word.split("").map((ch, i) => (
+                <span key={i} className="word-mask" style={{ "--i": i } as React.CSSProperties}>
+                  <span>{ch}</span>
+                </span>
+              ))}
+              <span className="word-mask" style={{ "--i": word.length + 2 } as React.CSSProperties}>
+                <span className="text-signal">.</span>
+              </span>
+            </span>
           </h1>
-          <p className="label mt-6 max-w-xs leading-relaxed text-plum">It picks up every call, in Hindi or English</p>
-          <BuildButton className="btn btn-primary mt-8 !px-8 !py-4">Build your agent <span aria-hidden>→</span></BuildButton>
-          <div className="mt-10 flex justify-center lg:absolute lg:-bottom-24 lg:right-0 lg:mt-0">
-            <Medallion size={170} />
+          <p className="anim-fade-3 mt-8 max-w-xl text-[clamp(1.35rem,2.3vw,1.95rem)] font-semibold leading-[1.18] tracking-[-0.02em]">
+            Voice agents that are tested before they talk to your customers.
+          </p>
+          <p className="anim-fade-3 mt-4 max-w-xl text-[17px] leading-relaxed text-mute">
+            A shop owner describes the receptionist they need, in Hindi or English. VaniForge builds it on ElevenLabs, sends difficult callers at it, explains exactly what broke and fixes it once the owner approves.
+          </p>
+
+          <ol className="anim-fade-3 mt-8 flex flex-wrap items-center gap-x-3 gap-y-2" aria-label="How it works in one line">
+            {LOOP.map(([k, v], i) => (
+              <li key={k} className="flex items-center gap-3">
+                <span className="rounded-card border-[1.5px] border-ink bg-card px-2.5 py-1.5 text-[15px]">
+                  <span className="label mr-2 font-bold text-problem">0{i + 1}</span>
+                  <span className="font-semibold">{k}</span> <span className="text-mute">{v}</span>
+                </span>
+                {i < LOOP.length - 1 && <span aria-hidden className="hidden font-mono text-mute sm:inline">→</span>}
+              </li>
+            ))}
+          </ol>
+
+          <div className="anim-fade-3 mt-9 flex flex-wrap gap-3">
+            <BuildButton className="btn btn-primary !px-7 !py-4">
+              Build your agent <span aria-hidden className="arrow">→</span>
+            </BuildButton>
+            <a href="#loop" className="btn !px-6 !py-4">
+              See how it works <span aria-hidden className="arrow">↓</span>
+            </a>
           </div>
+
+          <dl className="anim-fade-3 mt-12 max-w-xl">
+            {SPEC.map(([k, v]) => (
+              <div key={k} className="spec-row">
+                <dt className="label text-mute">{k}</dt>
+                <dd className="text-[16px] font-medium">{v}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
+
+        <figure className="anim-fade-2 lg:sticky lg:top-32">
+          <div className="panel-dark relative aspect-square overflow-hidden">
+            {/* Static render underneath: visible before the canvas paints, and without JS. */}
+            <Image src="/hero/plate-5-3.png" alt="" fill priority sizes="(min-width: 1024px) 42vw, 92vw" className="object-cover" />
+            <PlateCanvas />
+            <Screw className="left-2 top-2" />
+            <Screw className="right-2 top-2" />
+            <Screw className="bottom-2 left-2" />
+            <Screw className="bottom-2 right-2" />
+          </div>
+          <figcaption className="mt-4 text-sm leading-relaxed text-mute">
+            <span className="font-semibold text-ink">Live, from the plate equation.</span> Sand settles where a vibrating plate stops moving. VaniForge does the same to a voice agent: excite it with chaos callers, find the nodes where it breaks, patch them.
+          </figcaption>
+        </figure>
       </div>
     </section>
   );

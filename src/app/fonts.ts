@@ -1,21 +1,15 @@
 import localFont from "next/font/local";
 
-/** Bundled fonts (no Google Fonts request). Bodoni Moda: display. Jost: everything else. JetBrains Mono: X-Ray, latency, code only. */
-export const bodoni = localFont({
-  src: [
-    { path: "../fonts/BodoniModa.ttf", style: "normal", weight: "400 900" },
-    { path: "../fonts/BodoniModa-Italic.ttf", style: "italic", weight: "400 900" },
-  ],
-  variable: "--font-bodoni",
+/** Bundled fonts (no Google Fonts request). Inter Tight: headlines and numerals. Inter: body. JetBrains Mono: labels, specs, X-Ray. */
+export const interTight = localFont({
+  src: [{ path: "../fonts/InterTight.ttf", style: "normal", weight: "100 900" }],
+  variable: "--font-inter-tight",
   display: "swap",
 });
 
-export const jost = localFont({
-  src: [
-    { path: "../fonts/Jost.ttf", style: "normal", weight: "100 900" },
-    { path: "../fonts/Jost-Italic.ttf", style: "italic", weight: "100 900" },
-  ],
-  variable: "--font-jost",
+export const inter = localFont({
+  src: [{ path: "../fonts/Inter.ttf", style: "normal", weight: "100 900" }],
+  variable: "--font-inter",
   display: "swap",
 });
 

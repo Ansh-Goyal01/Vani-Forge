@@ -1,19 +1,26 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/Header";
-import { bodoni, jetbrains, jost } from "./fonts";
+import { RevealObserver } from "@/components/RevealObserver";
+import { inter, interTight, jetbrains } from "./fonts";
 
 export const metadata: Metadata = {
-  title: "VaniForge",
-  description: "Give your business a voice. Describe an agent in plain words, break it before customers do, then put it to work.",
+  title: "VaniForge: voice agents that are tested before they talk to your customers",
+  description: "Describe a voice agent in plain English or Hindi. VaniForge builds it on ElevenLabs, attacks it with difficult callers, explains what broke and patches it.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${bodoni.variable} ${jost.variable} ${jetbrains.variable}`}>
+    // suppressHydrationWarning: the inline script below adds the `js` class before React hydrates.
+    <html lang="en" className={`${interTight.variable} ${inter.variable} ${jetbrains.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+      </head>
       <body>
+        <a href="#main" className="label sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-card focus:p-3">Skip to content</a>
         <Header />
-        <main>{children}</main>
+        <main id="main">{children}</main>
+        <RevealObserver />
       </body>
     </html>
   );
