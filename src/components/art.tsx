@@ -69,22 +69,19 @@ export function MicFallback({ className = "" }: { className?: string }) {
 
 /** Terracotta medallion: a leaf whose veins form a sound wave. */
 export function Medallion({ size = 170 }: { size?: number }) {
-  const bars = [10, 18, 28, 40, 52, 40, 30, 44, 56, 42, 28, 18, 10];
+  const xs = Array.from({ length: 11 }, (_, i) => -52 + i * 10.4);
+  // Half-heights follow a sound-wave envelope; they stay inside the leaf outline.
+  const heights = [5, 10, 17, 25, 31, 36, 30, 22, 15, 9, 4];
   return (
     <svg viewBox="0 0 200 200" width={size} height={size} role="img" aria-label="A leaf whose veins form a sound wave" className="text-plum">
       <circle cx="100" cy="100" r="98" fill="#c75a3a" />
-      <g {...STROKE}>
-        <path d="M44 138 C44 78 100 40 162 50 C170 112 128 160 62 152 C54 150 48 146 44 138 Z" />
-        <path d="M44 138 C30 150 22 160 16 172" />
-        {/* midrib */}
-        <path d="M44 138 C86 112 124 86 156 56" />
-        {/* veins as sound-wave bars on either side of the midrib */}
-        {bars.map((h, i) => {
-          const t = i / (bars.length - 1);
-          const x = 56 + t * 94;
-          const y = 134 - t * 76;
-          return <line key={i} x1={x - 2} y1={y - h * 0.32} x2={x - 2} y2={y + h * 0.18} transform={`rotate(-38 ${x} ${y})`} />;
-        })}
+      <g transform="translate(100 100) rotate(-38)" {...STROKE}>
+        <path d="M-66 0 C-40 -46 34 -50 72 0 C34 50 -40 46 -66 0 Z" />
+        <path d="M-66 0 L72 0" />
+        <path d="M-66 0 C-78 4 -88 10 -96 20" />
+        {xs.map((x, i) => (
+          <line key={x} x1={x} y1={-heights[i]} x2={x} y2={heights[i]} />
+        ))}
       </g>
     </svg>
   );
