@@ -33,12 +33,19 @@ export function Studio({ agentId }: { agentId: string }) {
   }, [agentId]);
 
   if (error) return <div className="wrap py-12"><Notice tone="error">{error}</Notice></div>;
-  if (!state) return <p className="wrap label py-12 text-mute">Loading your agent...</p>;
+  if (!state)
+    return (
+      <div className="wrap space-y-6 py-10" aria-busy="true" aria-label="Loading your agent">
+        <div className="skeleton h-16 w-2/3" />
+        <div className="flex gap-2">{[0, 1, 2, 3, 4].map((i) => <div key={i} className="skeleton h-10 w-24" />)}</div>
+        <div className="skeleton h-56 w-full" />
+      </div>
+    );
 
   return (
     <div className="wrap space-y-8 pb-24 pt-6">
       <div className="grid gap-4 md:grid-cols-[auto_minmax(0,1fr)] md:gap-8">
-        <SectionNumber n="03" />
+        <SectionNumber n={`v${state.ir.version}`} />
         <div>
           <p className="label text-mute">Your agent</p>
           <h1 className="mt-2 text-[clamp(2.25rem,5vw,4rem)]">{state.ir.business.name}</h1>
@@ -63,6 +70,7 @@ export function Studio({ agentId }: { agentId: string }) {
         ))}
       </div>
 
+      <div key={tab} className="tab-in" role="tabpanel">
       {tab === "test" && <TestTab agentId={agentId} version={state.ir.version} />}
       {tab === "refine" && (
         <div className="space-y-14">
@@ -83,6 +91,7 @@ export function Studio({ agentId }: { agentId: string }) {
       {tab === "chaos" && <ChaosTab agentId={agentId} state={state} onState={setState} />}
       {tab === "deploy" && <DeployTab agentId={agentId} state={state} />}
       {tab === "observe" && <ObserveTab agentId={agentId} state={state} />}
+      </div>
     </div>
   );
 }

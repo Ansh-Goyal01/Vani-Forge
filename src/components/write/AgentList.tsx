@@ -18,8 +18,8 @@ export function AgentList() {
 
   return (
     <section>
-      <div className="flex flex-wrap items-start gap-x-8 gap-y-3">
-        <SectionNumber n="03" />
+      <div className="reveal flex flex-wrap items-start gap-x-8 gap-y-3">
+        <SectionNumber n="06" />
         <div className="pt-1">
           <h2 id="agents-title" className="text-[clamp(2rem,4.6vw,4rem)]">Your agents</h2>
           <p className="mt-3 text-[17px] text-mute">Agents created on this computer. Open one to test, refine, break and deploy it.</p>
@@ -35,7 +35,7 @@ export function AgentList() {
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {rows.map((r) => (
             <li key={r.agentId}>
-              <Link href={`/studio/${r.agentId}`} className="rule block rounded-card bg-card px-5 py-4 transition-colors hover:bg-ink hover:text-paper">
+              <Link href={`/studio/${r.agentId}`} className="lift rule block rounded-card bg-card px-5 py-4 hover:bg-ink hover:text-paper">
                 <span className="block font-display text-2xl font-bold tracking-tight">{r.name}</span>
                 <span className="label mt-1 block opacity-70">Version {r.version} · {r.agentId.slice(0, 14)}</span>
               </Link>

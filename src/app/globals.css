@@ -218,3 +218,132 @@ h3 {
     transition: none !important;
   }
 }
+
+/* ================= motion system ================= */
+/* Content is only hidden for the reveal when JS has run (html.js), so nothing disappears without it. */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--d, 0) * 90ms);
+}
+.js .reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Page and tab entrances. */
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+.page-in { animation: page-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.tab-in { animation: page-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* Headline words rise from a mask. */
+.word-mask { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.06em; margin-bottom: -0.06em; }
+.word-mask > span { display: inline-block; animation: word-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 70ms + 80ms); }
+@keyframes word-up {
+  from { transform: translateY(105%); }
+  to { transform: none; }
+}
+
+/* Arrow nudges on hover. */
+.btn .arrow { display: inline-block; transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+.btn:hover:not(:disabled) .arrow { transform: translateX(4px); }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+
+/* Card lift. */
+.lift { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s, background-color 0.2s, color 0.2s; }
+.lift:hover { transform: translateY(-3px); box-shadow: 0 14px 28px -20px rgba(17, 17, 17, 0.55); }
+
+/* Live dot. */
+@keyframes live {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+.live-dot { animation: live 1.2s ease-in-out infinite; }
+
+/* Indeterminate progress bar for long real operations (no fake percentages). */
+.progress-track { position: relative; height: 3px; overflow: hidden; background: rgba(17, 17, 17, 0.12); }
+.progress-track::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 35%;
+  background: var(--color-signal);
+  animation: indeterminate 1.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes indeterminate {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(300%); }
+}
+
+/* Skeleton shimmer. */
+.skeleton {
+  background: linear-gradient(90deg, rgba(17,17,17,0.06) 0%, rgba(17,17,17,0.12) 50%, rgba(17,17,17,0.06) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.3s linear infinite;
+  border-radius: 4px;
+}
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+/* Story sequence for the testing example: children play in order once revealed. */
+.js .story > * { opacity: 0; transform: translateY(10px); transition: opacity 0.6s, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+.js .story.is-in > * { opacity: 1; transform: none; }
+.js .story.is-in > *:nth-child(1) { transition-delay: 0.5s; }
+.js .story.is-in > *:nth-child(2) { transition-delay: 1.3s; }
+.js .story.is-in > *:nth-child(3) { transition-delay: 2.3s; }
+.js .story.is-in > *:nth-child(4) { transition-delay: 3.2s; }
+/* A strike that is drawn, not just shown. */
+.strike { position: relative; }
+.strike::after {
+  content: "";
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  top: 55%;
+  height: 3px;
+  background: var(--color-signal);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1) 2s;
+}
+.is-in .strike::after, html:not(.js) .strike::after { transform: scaleX(1); }
+
+/* Spectrogram sweep. */
+.js .sweep { clip-path: inset(0 100% 0 0); transition: clip-path 1.8s cubic-bezier(0.65, 0, 0.35, 1) 0.15s; }
+.js .is-in .sweep, .js .sweep.is-in { clip-path: inset(0 0 0 0); }
+
+/* SVG lines draw themselves. */
+.js .draw path.d, .js .draw line.d { stroke-dasharray: var(--len, 600); stroke-dashoffset: var(--len, 600); transition: stroke-dashoffset 1.6s cubic-bezier(0.65, 0, 0.35, 1); transition-delay: calc(var(--d, 0) * 120ms); }
+.js .draw.is-in path.d, .js .draw.is-in line.d { stroke-dashoffset: 0; }
+/* Pulses that travel along the spine and the heal arc. */
+@keyframes flow { to { stroke-dashoffset: -240; } }
+.flow { stroke-dasharray: 10 230; animation: flow 3.2s linear infinite; }
+@keyframes heal-dash { to { stroke-dashoffset: -28; } }
+.heal-dash { stroke-dasharray: 7 7; animation: heal-dash 1.4s linear infinite; }
+
+/* Sticky header with a hairline once the page scrolls. */
+.site-header { position: relative; background: rgba(231, 229, 224, 0.92); transition: box-shadow 0.3s; }
+@media (min-width: 768px) { .site-header { position: sticky; top: 0; backdrop-filter: saturate(1.1) blur(6px); } }
+.site-header.scrolled { box-shadow: 0 1px 0 rgba(17, 17, 17, 0.25); }
+.marker-move { transition: left 0.9s cubic-bezier(0.16, 1, 0.3, 1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal, .js .story > *, .js .sweep { opacity: 1 !important; transform: none !important; clip-path: none !important; }
+  .js .draw path.d, .js .draw line.d { stroke-dashoffset: 0 !important; }
+  .strike::after { transform: scaleX(1) !important; }
+  .word-mask > span { transform: none !important; }
+}
+
+/* SVG diagram type */
+.svg-head { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; fill: #111111; }
+.svg-title { font-family: var(--font-sans); font-weight: 650; font-size: 14.5px; fill: #111111; letter-spacing: -0.01em; }
+.svg-sub { font-family: var(--font-mono); font-size: 8.6px; letter-spacing: 0.1em; fill: #54534f; }
+.svg-code { font-family: var(--font-mono); font-size: 10.6px; fill: #e7e5e0; }
+.svg-code-k { fill: #ff4f13; }
+.svg-heal { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.1em; fill: #c73a0b; font-weight: 600; }

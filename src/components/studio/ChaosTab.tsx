@@ -139,7 +139,12 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
         <span className="label text-mute">Audio uses real call credits, one run per caller.</span>
       </div>
       {blocked && credits && <Notice tone="error">{credits.guard.reason} Audio tests are paused.</Notice>}
-      {busy && <Notice>{busy}</Notice>}
+      {busy && (
+        <div className="space-y-2">
+          <Notice>{busy}</Notice>
+          <div className="progress-track" role="progressbar" aria-label={busy} />
+        </div>
+      )}
       {error && <Notice tone={/\.env\.local/.test(error) ? "keys" : "error"}>{error}</Notice>}
 
       {runs === null && !error && <p className="label text-mute">Loading past runs...</p>}

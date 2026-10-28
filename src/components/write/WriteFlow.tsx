@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EXAMPLE_PROMPTS, USE_CASE_STARTERS } from "@/lib/examples";
 import { disclosesAI, type VoiceIRDraft } from "@/lib/voiceir";
 import { Notice, XRay, api } from "../ui";
@@ -27,6 +27,17 @@ export function WriteFlow() {
   const [busy, setBusy] = useState<"compile" | "create" | null>(null);
   const [error, setError] = useState<{ message: string; keys: boolean } | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
+  const draftRef = useRef<HTMLDivElement>(null);
+  const hadDraft = useRef(false);
+
+  // When the promise sheet first arrives, bring it into view.
+  useEffect(() => {
+    if (draft && !hadDraft.current) {
+      hadDraft.current = true;
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      draftRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    }
+  }, [draft]);
 
   const fail = (e: Error) => setError({ message: e.message, keys: /\.env\.local|KEY/.test(e.message) });
 
@@ -78,11 +89,30 @@ export function WriteFlow() {
   const canDraft = brief.trim().length > 0 && brief.length <= LIMIT && busy === null;
   const canCreate = draft && voiceId && disclosesAI(draft.persona.firstMessage) && draft.promises.every((p) => p.text.trim()) && busy === null;
 
+  const steps = [
+    { label: "Describe the business", done: Boolean(draft), active: !draft },
+    { label: "Check promises, pick a voice", done: Boolean(draft && voiceId), active: Boolean(draft && !voiceId) },
+    { label: "Create the agent", done: false, active: Boolean(draft && voiceId) },
+  ];
+
   return (
     <div className="space-y-10">
-      <div className="spec-card">
-        <p className="label text-mute">The brief</p>
-        <h2 className="mt-3 max-w-2xl text-[clamp(2rem,4.2vw,3.5rem)] ">Tell us about your business.</h2>
+      <ol className="reveal grid gap-2 sm:grid-cols-3" aria-label="Progress">
+        {steps.map((s, i) => (
+          <li
+            key={s.label}
+            aria-current={s.active ? "step" : undefined}
+            className={`rounded-card border-[1.5px] px-3 py-2.5 transition-colors duration-300 ${s.done ? "border-ink bg-ink text-paper" : s.active ? "border-signal bg-card" : "border-ink/30 text-mute"}`}
+          >
+            <span className={`label mr-2 font-bold ${s.done ? "text-signal" : s.active ? "text-problem" : ""}`}>{s.done ? "✓" : `0${i + 1}`}</span>
+            <span className="text-[15px] font-semibold">{s.label}</span>
+          </li>
+        ))}
+      </ol>
+
+      <div className="spec-card reveal">
+        <p className="label text-mute">Step 1 · The brief</p>
+        <h3 className="mt-3 max-w-2xl text-[clamp(1.75rem,3.4vw,2.75rem)] !font-extrabold !tracking-[-0.03em]">Tell us about your business.</h3>
         <p className="mt-4 max-w-2xl text-mute">
           Write it the way you would brief a new receptionist, in English, Hindi or both. Use made-up names and numbers for now: the free AI service may learn from what you type.
         </p>
@@ -97,6 +127,9 @@ export function WriteFlow() {
             onChange={(e) => setBrief(e.target.value)}
             placeholder="I run a dental clinic in Noida. I need a receptionist who..."
           />
+          <div aria-hidden className="mt-2 h-[3px] overflow-hidden rounded bg-ink/10">
+            <div className={`h-full transition-[width] duration-300 ${brief.length > LIMIT - 100 ? "bg-signal" : "bg-ink"}`} style={{ width: `${(brief.length / LIMIT) * 100}%` }} />
+          </div>
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
             <span className={`label ${brief.length > LIMIT - 100 ? "font-semibold text-problem" : "text-mute"}`}>{brief.length} / {LIMIT}</span>
             <div className="flex flex-wrap gap-2">
@@ -123,7 +156,7 @@ export function WriteFlow() {
           <ul className="grid gap-3 sm:grid-cols-2">
             {EXAMPLE_PROMPTS.map((ex) => (
               <li key={ex.title} className="min-w-0">
-                <button type="button" className="rule w-full rounded-card bg-card px-4 py-3 text-left transition-colors hover:bg-ink hover:text-paper" onClick={() => setBrief(ex.text.slice(0, LIMIT))}>
+                <button type="button" className="lift rule w-full rounded-card bg-card px-4 py-3 text-left hover:bg-ink hover:text-paper" onClick={() => setBrief(ex.text.slice(0, LIMIT))}>
                   <span className="block font-display text-lg">{ex.title}</span>
                   <span className="block truncate text-sm opacity-80">{ex.text}</span>
                 </button>
@@ -134,19 +167,20 @@ export function WriteFlow() {
 
         <div className="mt-10 flex flex-wrap items-center gap-4">
           <button type="button" className="btn btn-primary !px-8 !py-4" disabled={!canDraft} onClick={makeDraft}>
-            {busy === "compile" ? "Writing your promise sheet..." : draft ? "Write it again" : "Write my promise sheet"}
+            {busy === "compile" ? "Writing your promise sheet..." : draft ? "Write it again" : <>Write my promise sheet <span aria-hidden className="arrow">→</span></>}
           </button>
           {busy === "compile" && <span className="label text-mute">If the free AI is busy this can take up to 20 seconds.</span>}
         </div>
+        {busy === "compile" && <div className="progress-track mt-5" role="progressbar" aria-label="Writing your promise sheet" />}
       </div>
 
       {error && <Notice tone={error.keys ? "keys" : "error"}>{error.message}</Notice>}
 
       {draft && (
-        <div className="spec-card space-y-12">
+        <div ref={draftRef} className="spec-card tab-in scroll-mt-32 space-y-12">
           <div>
-            <p className="label text-mute">The promise sheet</p>
-            <h2 className="mt-3 text-[clamp(2rem,4.2vw,3.5rem)] ">Check the promises.</h2>
+            <p className="label text-mute">Step 2 · The promise sheet</p>
+            <h3 className="mt-3 text-[clamp(1.75rem,3.4vw,2.75rem)] !font-extrabold !tracking-[-0.03em]">Check the promises.</h3>
             <p className="mt-3 max-w-2xl text-mute">
               {draft.business.name} will keep these on every call. Change anything that is not right.
             </p>
@@ -164,7 +198,7 @@ export function WriteFlow() {
 
           <div className="flex flex-wrap items-center gap-4">
             <button type="button" className="btn btn-primary !px-8 !py-4" disabled={!canCreate} onClick={create}>
-              {busy === "create" ? "Creating your agent..." : "Create my agent"}
+              {busy === "create" ? "Creating your agent..." : <>Create my agent <span aria-hidden className="arrow">→</span></>}
             </button>
             {!voiceId && <span className="label text-mute">Pick a voice to continue.</span>}
           </div>

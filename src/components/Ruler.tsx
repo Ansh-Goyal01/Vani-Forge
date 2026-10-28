@@ -32,7 +32,7 @@ export function Ruler({ marker }: { marker: number }) {
         </span>
       ))}
       <span
-        className="anim-marker absolute top-0 -translate-x-1/2 border-x-[5px] border-t-[8px] border-x-transparent border-t-signal"
+        className="anim-marker marker-move absolute top-0 -translate-x-1/2 border-x-[5px] border-t-[8px] border-x-transparent border-t-signal"
         style={{ left: pct(marker) }}
       />
     </div>

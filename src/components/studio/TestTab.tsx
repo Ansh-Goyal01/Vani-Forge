@@ -118,7 +118,10 @@ function TestConsole({ agentId, version }: Props) {
         <div>
           <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="label text-paper/80">Talking to version {version}</p>
+              <p className="label flex items-center gap-2 text-paper/80">
+                {(connected || busy) && <span aria-hidden className="live-dot inline-block h-2 w-2 rounded-full bg-signal" />}
+                {connected ? "Live" : busy ? "Dialling" : "Ready"} · version {version}
+              </p>
               <p className="font-display text-3xl">
                 {connected ? (isSpeaking ? "Agent is speaking" : "Agent is listening") : busy ? "Connecting..." : "Not on a call"}
               </p>
@@ -143,6 +146,11 @@ function TestConsole({ agentId, version }: Props) {
             )}
             {!connected && <span className="label text-paper/80">Calls end by themselves after {TEST_CALL_SECONDS} seconds to save credits.</span>}
           </div>
+          {connected && secondsLeft !== null && (
+            <div aria-hidden className="mt-5 h-[3px] overflow-hidden rounded bg-paper/15">
+              <div className="h-full bg-signal transition-[width] duration-300 ease-linear" style={{ width: `${(secondsLeft / TEST_CALL_SECONDS) * 100}%` }} />
+            </div>
+          )}
         </div>
       </div>
 

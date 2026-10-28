@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { CreditsBadge } from "./CreditsBadge";
 import { Ruler } from "./Ruler";
 
@@ -14,16 +15,45 @@ const LINKS = [
 
 /** Where the orange marker sits on the ruler for each part of the app (decorative). */
 function band(pathname: string): { hz: number; title: string } {
-  if (pathname.startsWith("/studio")) return { hz: 500, title: "STUDIO" };
-  if (pathname.startsWith("/a/")) return { hz: 1000, title: "TEST PAGE" };
+  if (pathname.startsWith("/studio")) return { hz: 2000, title: "STUDIO" };
+  if (pathname.startsWith("/a/")) return { hz: 4000, title: "TEST PAGE" };
   return { hz: 63, title: "HOME" };
 }
 
 export function Header() {
-  const { hz, title } = band(usePathname() ?? "/");
+  const pathname = usePathname() ?? "/";
+  const [section, setSection] = useState<{ hz: number; title: string } | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  // On the landing page the marker follows the section in the middle of the screen.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    let io: IntersectionObserver | undefined;
+    if (pathname === "/") {
+      io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            const el = e.target as HTMLElement;
+            setSection({ hz: Number(el.dataset.band), title: (el.dataset.title ?? "").toUpperCase() });
+          }
+        },
+        { rootMargin: "-45% 0px -50% 0px" },
+      );
+      document.querySelectorAll<HTMLElement>("[data-band]").forEach((el) => io!.observe(el));
+    }
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      io?.disconnect();
+    };
+  }, [pathname]);
+
+  const { hz, title } = pathname === "/" && section ? section : band(pathname);
   return (
-    <header className="relative z-20">
-      <div className="wrap pt-4">
+    <header className={`site-header z-40 ${scrolled ? "scrolled" : ""}`}>
+      <div className="wrap pb-1 pt-3">
         <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
           <Link href="/" className="label flex items-baseline gap-2 !text-[11px]" aria-label="VaniForge home">
             <span className="font-bold tracking-[0.08em]">VaniForge</span>
@@ -43,9 +73,9 @@ export function Header() {
             </Link>
           </div>
         </div>
-        <div className="mt-3">
+        <div className="mt-2">
           <div className="label flex justify-between text-[9px] text-mute" aria-hidden>
-            <span>{title}</span>
+            <span className="transition-opacity">{title}</span>
             <span>{hz >= 1000 ? `${hz / 1000} kHz` : `${hz} Hz`} band</span>
           </div>
           <Ruler marker={hz} />

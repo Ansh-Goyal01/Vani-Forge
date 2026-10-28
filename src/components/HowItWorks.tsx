@@ -24,9 +24,9 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section id="how" aria-labelledby="how-title" className="scroll-mt-6 py-16">
+    <section id="how" data-band="125" data-title="How it works" aria-labelledby="how-title" className="scroll-mt-28 py-20">
       <div className="wrap">
-        <div className="flex flex-wrap items-start gap-x-8 gap-y-3">
+        <div className="reveal flex flex-wrap items-start gap-x-8 gap-y-3">
           <SectionNumber n="01" />
           <div className="max-w-3xl pt-1">
             <h2 id="how-title" className="text-[clamp(2rem,4.6vw,4rem)]">Three steps. No engineers needed.</h2>
@@ -36,8 +36,8 @@ export function HowItWorks() {
           </div>
         </div>
         <ol className="mt-12 grid border-t-[1.5px] border-ink md:grid-cols-3 md:gap-x-10 md:border-t-0">
-          {STEPS.map((s) => (
-            <li key={s.tag} className="border-t-[1.5px] border-ink py-6">
+          {STEPS.map((s, i) => (
+            <li key={s.tag} className="reveal border-t-[1.5px] border-ink py-6" style={{ "--d": i + 1 } as React.CSSProperties}>
               <p className="label font-bold text-problem">{s.tag}</p>
               <h3 className="mt-3 text-[1.6rem]">{s.title}</h3>
               <p className="mt-3 text-[16px] leading-relaxed">{s.body}</p>

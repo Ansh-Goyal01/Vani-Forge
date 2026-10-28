@@ -84,6 +84,7 @@ export function RefineTab({ agentId, state, onState }: { agentId: string; state:
           </button>
           {busy === "propose" && <span className="label text-mute">If the free AI is busy this can take up to 20 seconds.</span>}
         </div>
+        {busy !== null && <div className="progress-track mt-4" role="progressbar" aria-label="Working" />}
       </div>
 
       {error && <Notice tone={/\.env\.local/.test(error) ? "keys" : "error"}>{error}</Notice>}
@@ -92,7 +93,7 @@ export function RefineTab({ agentId, state, onState }: { agentId: string; state:
       {noChange && !proposal.error && <Notice>{proposal.summary || "Nothing needs to change for that."}</Notice>}
 
       {proposal && proposal.ops.length > 0 && (
-        <section className="rule rounded-card bg-card p-5">
+        <section className="tab-in rule rounded-card bg-card p-5">
           <h3 className="text-xl font-semibold">{proposal.summary}</h3>
           <ul className="mt-4 space-y-4">
             {proposal.changes.map((c, i) => (

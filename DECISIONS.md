@@ -81,3 +81,14 @@ Ambiguities in `CLAUDE.md` and the simplest reasonable call made for each. Newes
 57. **The "Testing" section keeps its labelled illustration** (synthetic spectrogram, "Parso saadhe chaar baje", "Paris", "haan ji"), marked "illustrative, not a real call". The deck's invented figures (call 0417, rupee costs, pass^k counts) were not copied into the app.
 58. **The Test console waveform is real-level driven**: bars scale with the output audio level from `getOutputByteFrequencyData`; at rest they sit at a low line. This restores the original spec and replaces the rings.
 59. **Ruler ticks use fixed-precision percentages** (`toFixed(3)`) so server and client render identical style strings; unrounded floats caused a hydration warning.
+
+## Judge-ready polish
+
+60. **The landing page now tells the story before asking for input:** hero → how it works → under the hood → testing → ElevenLabs inside → build → your agents. "Build your agent" still jumps straight to the brief and focuses it.
+61. **The hero plate is live**: `src/lib/plate.ts` (pure, unit-tested) moves sand by a random kick scaled by `|f(x, y)|`, so it collects on the nodal lines. 16,000 grains on desktop, 9,000 on phones; it stops when settled and pauses off-screen. The static PNG stays underneath for first paint and no-JS.
+62. **The pipeline diagram only names things the code does.** Structured procedures, voice design and voice cloning (in the deck) are not shown because they are not built.
+63. **"14 ElevenLabs capabilities"** is the length of the list in `ElevenInside.tsx`, which mirrors the README table; it is counted, not claimed.
+64. **Reveals are hidden only when JS has run** (`html.js`, set by an inline script; `suppressHydrationWarning` on `<html>`), and are fully visible with reduced motion.
+65. **No fake progress**: long operations (writing the promise sheet, chaos runs, refine) show indeterminate bars; the test call shows a real 90-second countdown bar.
+66. **The header is sticky from 768 px up only**, so it does not eat a phone screen.
+67. **The studio's big numeral is the live VoiceIR version** (`v1`, `v2`...), so it means something.
