@@ -35,7 +35,7 @@ export function PromiseSheet({ draft, onChange }: { draft: VoiceIRDraft; onChang
 
       {KINDS.map((kind) => (
         <section key={kind}>
-          <h3 className="mb-4 border-b-[1.5px] border-ink pb-2 text-[1.15rem] uppercase tracking-[0.12em]">
+          <h3 className="label mb-4 border-b-[1.5px] border-ink pb-2 !text-[12px] font-bold">
             {kind === "handoff" ? "Hand off to a human when" : kind === "must" ? "Always" : "Never"}
           </h3>
           <ul className="space-y-3">

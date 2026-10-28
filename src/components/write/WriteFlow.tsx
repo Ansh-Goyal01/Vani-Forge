@@ -82,7 +82,7 @@ export function WriteFlow() {
     <div className="space-y-10">
       <div className="spec-card">
         <p className="label text-mute">The brief</p>
-        <h2 className="mt-3 max-w-2xl text-[clamp(2rem,4.2vw,3.5rem)] !normal-case">Tell us about your business.</h2>
+        <h2 className="mt-3 max-w-2xl text-[clamp(2rem,4.2vw,3.5rem)] ">Tell us about your business.</h2>
         <p className="mt-4 max-w-2xl text-mute">
           Write it the way you would brief a new receptionist, in English, Hindi or both. Use made-up names and numbers for now: the free AI service may learn from what you type.
         </p>
@@ -146,7 +146,7 @@ export function WriteFlow() {
         <div className="spec-card space-y-12">
           <div>
             <p className="label text-mute">The promise sheet</p>
-            <h2 className="mt-3 text-[clamp(2rem,4.2vw,3.5rem)] !normal-case">Check the promises.</h2>
+            <h2 className="mt-3 text-[clamp(2rem,4.2vw,3.5rem)] ">Check the promises.</h2>
             <p className="mt-3 max-w-2xl text-mute">
               {draft.business.name} will keep these on every call. Change anything that is not right.
             </p>
@@ -154,7 +154,7 @@ export function WriteFlow() {
           <PromiseSheet draft={draft} onChange={setDraft} />
 
           <div>
-            <h3 className="mb-4 border-b-[1.5px] border-ink pb-2 text-[1.15rem] uppercase tracking-[0.12em]">Pick a voice</h3>
+            <h3 className="label mb-4 border-b-[1.5px] border-ink pb-2 !text-[12px] font-bold">Pick a voice</h3>
             <VoicePicker value={voiceId} onChange={setVoiceId} />
           </div>
 

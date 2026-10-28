@@ -70,3 +70,14 @@ Ambiguities in `CLAUDE.md` and the simplest reasonable call made for each. Newes
 49. **The brief mentioned a rotating example behind the empty text box with "Use this example".** That control did not exist in the current write flow, which has example cards and use-case starters instead. Those were kept and restyled; no new behaviour was added.
 50. **The header is global and uses one nav everywhere**, with anchors (`/#how`, `/#proof`, `/#agents`). "Open studio" goes to `#agents` as specified. The old Hz ruler was removed.
 51. **No new packages.** CSS, inline SVG, `next/image` and existing dependencies only.
+
+## Restyle to the v2 deck
+
+52. **The deck is the source of truth.** `VaniForge_v2_ShortCircuit_BuildArena.pdf` uses the original "Swiss Acoustic Industrial" look, so the mauve redesign (decisions 42 to 51) is superseded and its assets (Bodoni Moda, Jost, cloud and medallion art, vertical word, grain) were removed. Behaviour was not touched; the 50 unit tests still pass.
+53. **Exact values were sampled from the rendered PDF** (200 dpi): paper `#E7E5E0` (with banding between `#E3E2DD` and `#EAE9E4`), ink `#111111`, orange `#FF4F13`, graphite `#181818`, card `#F4F3EF`, secondary text about `#54534F`. The PDF embeds no font files (text is outlined), so fonts were identified by eye: Inter Tight (extra bold, tight) for headlines, Inter for body, JetBrains Mono for labels. These match the original CLAUDE.md spec. If the deck used a different font, swap the three files in `src/fonts/`.
+54. **Orange on paper fails AA at small sizes** (about 2.6:1). The deck uses it that way for numerals and tags; here pure orange is kept for large numerals, shapes and graphite panels, and small orange text uses `#C73A0B` (4.6:1). The big numerals are decorative; the headline beside them carries the meaning.
+55. **The hero is the deck's title slide**, with a generated Chladni-plate figure standing in for the deck's image. It is made by `public/hero/` tooling in this session (density from `cos(5πx)cos(3πy) − cos(3πx)cos(5πy)`), not copied from the deck.
+56. **The deck's slide counter ("01 / 07 · 63 HZ BAND") became a route marker**: the orange triangle on the ruler sits at 63 Hz on home, 500 Hz in the studio and 1 kHz on the public page.
+57. **The "Testing" section keeps its labelled illustration** (synthetic spectrogram, "Parso saadhe chaar baje", "Paris", "haan ji"), marked "illustrative, not a real call". The deck's invented figures (call 0417, rupee costs, pass^k counts) were not copied into the app.
+58. **The Test console waveform is real-level driven**: bars scale with the output audio level from `getOutputByteFrequencyData`; at rest they sit at a low line. This restores the original spec and replaces the rings.
+59. **Ruler ticks use fixed-precision percentages** (`toFixed(3)`) so server and client render identical style strings; unrounded floats caused a hydration warning.
