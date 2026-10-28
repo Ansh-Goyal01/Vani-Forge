@@ -1,5 +1,6 @@
 "use client";
 
+import { ProblemDot } from "../ui";
 import { PROMISE_KIND_LABEL, disclosesAI, type PromiseKind, type VoiceIRDraft } from "@/lib/voiceir";
 
 const KINDS: PromiseKind[] = ["must", "never", "handoff"];
@@ -14,7 +15,7 @@ export function PromiseSheet({ draft, onChange }: { draft: VoiceIRDraft; onChang
   const disclosureOk = disclosesAI(draft.persona.firstMessage);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <div>
         <label className="label mb-2 block text-mute" htmlFor="first-message">What the agent says first</label>
         <textarea
@@ -25,7 +26,8 @@ export function PromiseSheet({ draft, onChange }: { draft: VoiceIRDraft; onChang
           onChange={(e) => onChange({ ...draft, persona: { ...draft.persona, firstMessage: e.target.value } })}
         />
         {!disclosureOk && (
-          <p className="mt-1 text-sm text-signal" role="alert">
+          <p className="mt-2 text-sm text-problem" role="alert">
+            <ProblemDot />
             The first message must say it is an AI assistant, so callers always know.
           </p>
         )}
@@ -33,27 +35,28 @@ export function PromiseSheet({ draft, onChange }: { draft: VoiceIRDraft; onChang
 
       {KINDS.map((kind) => (
         <section key={kind}>
-          <h3 className="mb-3 text-xl font-semibold">
+          <h3 className="mb-4 border-b-[1.5px] border-plum pb-2 text-[1.15rem] uppercase tracking-[0.12em]">
             {kind === "handoff" ? "Hand off to a human when" : kind === "must" ? "Always" : "Never"}
           </h3>
-          <ul className="space-y-2">
+          <ul className="space-y-3">
             {draft.promises.map((p, i) =>
               p.kind !== kind ? null : (
-                <li key={p.id} className="flex gap-2">
-                  <input className="field" aria-label={`${PROMISE_KIND_LABEL[kind]} promise`} value={p.text} onChange={(e) => setPromise(i, { text: e.target.value })} />
+                <li key={p.id} className="flex flex-wrap items-end gap-x-2 gap-y-2 sm:flex-nowrap">
+                  <input className="field flex-[4_1_16rem]" aria-label={`${PROMISE_KIND_LABEL[kind]} promise`} value={p.text} onChange={(e) => setPromise(i, { text: e.target.value })} />
+                  <span className="leader hidden sm:block" aria-hidden />
                   <select className="field !w-auto" aria-label="Promise type" value={p.kind} onChange={(e) => setPromise(i, { kind: e.target.value as PromiseKind })}>
                     {KINDS.map((k) => (
                       <option key={k} value={k}>{PROMISE_KIND_LABEL[k]}</option>
                     ))}
                   </select>
-                  <button type="button" className="btn" aria-label="Remove promise" onClick={() => onChange({ ...draft, promises: draft.promises.filter((_, j) => j !== i) })}>
+                  <button type="button" className="btn !px-4 !py-2.5" aria-label="Remove promise" onClick={() => onChange({ ...draft, promises: draft.promises.filter((_, j) => j !== i) })}>
                     Remove
                   </button>
                 </li>
               ),
             )}
           </ul>
-          <button type="button" className="btn mt-3" onClick={() => addPromise(kind)}>Add</button>
+          <button type="button" className="btn mt-4 !px-5 !py-2" onClick={() => addPromise(kind)}>Add</button>
         </section>
       ))}
     </div>

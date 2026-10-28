@@ -32,30 +32,31 @@ export function Studio({ agentId }: { agentId: string }) {
     api<AgentState>(`/api/agents/${agentId}`).then(setState).catch((e: Error) => setError(e.message));
   }, [agentId]);
 
-  if (error) return <Notice tone="error">{error}</Notice>;
-  if (!state) return <p className="label text-mute">Loading your agent...</p>;
+  if (error) return <div className="wrap py-12"><Notice tone="error">{error}</Notice></div>;
+  if (!state) return <p className="wrap label py-12 text-mute">Loading your agent...</p>;
 
   return (
-    <div className="space-y-8">
-      <div className="grid gap-6 md:grid-cols-[auto_1fr]">
+    <div className="wrap space-y-8 pb-24 pt-6">
+      <div className="grid gap-4 md:grid-cols-[auto_minmax(0,1fr)] md:gap-8">
         <SectionNumber n="03" />
         <div>
-          <h1 className="text-4xl font-semibold">{state.ir.business.name}</h1>
-          <p className="label mt-2 text-mute">Version {state.ir.version} live / {state.ir.languages.map((l) => (l === "en" ? "English" : "Hindi")).join(" + ")}{state.ir.hinglish ? " / Hinglish" : ""}</p>
+          <p className="label text-mute">Your agent</p>
+          <h1 className="mt-2 text-[clamp(2.25rem,5vw,4rem)]">{state.ir.business.name}</h1>
+          <p className="label mt-3 text-mute">Version {state.ir.version} live / {state.ir.languages.map((l) => (l === "en" ? "English" : "Hindi")).join(" + ")}{state.ir.hinglish ? " / Hinglish" : ""}</p>
           {!state.transferNumberSet && state.ir.promises.some((p) => p.kind === "handoff") && (
             <p className="mt-2 text-sm text-mute">Transfer number not set, so hand-offs become a callback promise. Set OWNER_TRANSFER_NUMBER to enable live transfer.</p>
           )}
         </div>
       </div>
 
-      <div role="tablist" className="rule-b flex flex-wrap gap-1">
+      <div role="tablist" aria-label="Studio sections" className="flex flex-wrap gap-2">
         {TABS.map((t) => (
           <button
             key={t.id}
             role="tab"
             aria-selected={tab === t.id}
             onClick={() => setTab(t.id)}
-            className={`label px-4 py-2.5 ${tab === t.id ? "bg-ink text-alu" : "hover:bg-ink/10"}`}
+            className={`btn !py-2.5 ${tab === t.id ? "btn-primary" : ""}`}
           >
             {t.label}
           </button>

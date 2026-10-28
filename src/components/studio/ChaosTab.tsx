@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { compareRuns, keptLabel, rollupByPromise, tally, type ChaosRun, type Tally, type Tier } from "@/lib/chaos";
 import type { HealProposal } from "@/lib/heal";
 import { useCredits } from "../CreditsBadge";
-import { Notice, XRay, api } from "../ui";
+import { Check, Notice, XRay, api } from "../ui";
 import type { AgentState } from "./Studio";
 
 type PersonaInfo = { id: string; name: string; summary: string };
@@ -121,7 +121,7 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
         </p>
         <ul className="mt-4 grid gap-2 sm:grid-cols-2">
           {personas.map((p) => (
-            <li key={p.id} className="rule rounded-sq bg-paper px-3 py-2">
+            <li key={p.id} className="rule rounded-card bg-blush px-3 py-2">
               <span className="block font-medium">{p.name}</span>
               <span className="block text-sm text-mute">{p.summary}</span>
             </li>
@@ -146,8 +146,8 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
       {runs !== null && runs.length === 0 && !busy && <Notice>No chaos runs yet. Press a run button to start. Nothing is shown until a real run finishes.</Notice>}
 
       {healed.map((h) => (
-        <section key={`${h.version}-${h.promiseId}`} className="rule rounded-sq border-signal bg-paper p-5">
-          <p className="label text-signal">Fixed and re-tested</p>
+        <section key={`${h.version}-${h.promiseId}`} className="rule rounded-card border-terracotta bg-blush p-5">
+          <p className="label flex items-center gap-2"><Check /> Fixed and re-tested</p>
           <p className="mt-1 font-medium">{promiseText(h.promiseId)}</p>
           <p className="mt-2 font-mono text-sm">
             Before: {h.before ? keptLabel(h.before) : "n/a"} {"->"} After (version {h.version}): {h.after ? keptLabel(h.after) : "n/a"}
@@ -156,11 +156,11 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
       ))}
 
       {proposal && (
-        <section className="rule rounded-sq bg-paper p-5">
+        <section className="rule rounded-card bg-blush p-5">
           <p className="label text-mute">Proposed fix for: {proposal.p.personaName}</p>
           <h3 className="mt-1 text-xl font-semibold">{proposal.p.promiseText}</h3>
           {proposal.p.evidence && (
-            <blockquote className="mt-3 border-l-[3px] border-signal pl-3">
+            <blockquote className="mt-3 border-l-[3px] border-terracotta pl-3">
               <span className="label block text-mute">What the agent said</span>
               {proposal.p.evidence}
             </blockquote>
@@ -171,7 +171,7 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
               <li key={i}>
                 <p className="label text-mute">{c.label}</p>
                 {c.before !== undefined && <p className="text-sm line-through opacity-60">{typeof c.before === "string" ? c.before : JSON.stringify(c.before)}</p>}
-                <p className="border-l-[3px] border-signal pl-3">{typeof c.after === "string" ? c.after : JSON.stringify(c.after)}</p>
+                <p className="border-l-[3px] border-terracotta pl-3">{typeof c.after === "string" ? c.after : JSON.stringify(c.after)}</p>
               </li>
             ))}
           </ul>
@@ -191,7 +191,7 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
         <section>
           <div role="tablist" className="mb-4 flex gap-1">
             {(["text", "audio"] as const).map((t) => (
-              <button key={t} role="tab" aria-selected={tier === t} onClick={() => setTier(t)} className={`label rule rounded-sq px-3 py-1.5 ${tier === t ? "bg-ink text-alu" : ""}`}>
+              <button key={t} role="tab" aria-selected={tier === t} onClick={() => setTier(t)} className={`label rule rounded-card px-3 py-1.5 ${tier === t ? "bg-plum text-blush" : ""}`}>
                 {t === "text" ? "Text tests" : "Audio tests"}
               </button>
             ))}
@@ -204,6 +204,18 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
         </section>
       )}
     </div>
+  );
+}
+
+/** "kept 2 of 3": plum with a check when every run kept the promise, terracotta dot and bold when not. */
+function Tallied({ t }: { t: Tally }) {
+  if (!t.total) return <span className="font-mono text-sm">no score</span>;
+  const ok = t.kept === t.total;
+  return (
+    <span className={`inline-flex items-center gap-2 font-mono text-sm ${ok ? "" : "font-semibold text-problem"}`}>
+      {ok ? <Check /> : <span aria-hidden className="inline-block h-2.5 w-2.5 rounded-full bg-terracotta" />}
+      {keptLabel(t)}
+    </span>
   );
 }
 
@@ -227,10 +239,10 @@ function RunView({
       </p>
       {run.error && <Notice tone="error">{run.error}</Notice>}
       {rollupByPromise(run).map((r) => (
-        <article key={r.promiseId} className="rule rounded-sq bg-paper p-4">
+        <article key={r.promiseId} className="rule rounded-card bg-blush p-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="text-lg font-semibold">{promiseText(r.promiseId)}</h3>
-            <span className={`font-mono text-sm ${r.tally.kept < r.tally.total ? "text-signal" : ""}`}>{r.tally.total ? keptLabel(r.tally) : "no score"}</span>
+            <Tallied t={r.tally} />
           </div>
           <ul className="mt-3 space-y-3">
             {run.items
@@ -240,11 +252,11 @@ function RunView({
                 const failing = item.samples.find((s) => !s.passed && !s.unscored);
                 const shown = failing ?? item.samples[0];
                 return (
-                  <li key={item.personaId} className="border-t border-ink/20 pt-3">
+                  <li key={item.personaId} className="border-t border-plum/20 pt-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <span>{personaLabel(personas, item.personaId)}</span>
                       <span className="flex items-center gap-3">
-                        <span className="font-mono text-sm">{t.total ? keptLabel(t) : "no score"}</span>
+                        <Tallied t={t} />
                         {failing && (
                           <button type="button" className="btn" disabled={busy} onClick={() => onExplain(item.personaId, item.promiseId)}>
                             Explain and fix
@@ -256,9 +268,9 @@ function RunView({
                       <ul className="mt-2 space-y-2 text-sm">
                         {shown.heard.map((h, i) => (
                           <li key={i} className="panel-dark px-3 py-2">
-                            <span className="label text-alu/60">Caller said</span> {h.said}
+                            <span className="label text-blush/80">Caller said</span> {h.said}
                             <br />
-                            <span className="label text-signal">Agent heard</span> {h.heard || "nothing"}
+                            <span className="label"><span aria-hidden className="mr-1.5 inline-block h-2 w-2 rounded-full bg-terracotta" />Agent heard</span> {h.heard || "nothing"}
                           </li>
                         ))}
                       </ul>
