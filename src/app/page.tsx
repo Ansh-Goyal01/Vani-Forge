@@ -1,5 +1,6 @@
 import { ElevenInside } from "@/components/ElevenInside";
 import { Footer } from "@/components/Footer";
+import { HashScroll } from "@/components/HashScroll";
 import { Hero } from "@/components/Hero";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Pipeline } from "@/components/Pipeline";
@@ -32,6 +33,7 @@ export default function Home() {
         <AgentList />
       </section>
       <Footer />
+      <HashScroll />
     </>
   );
 }

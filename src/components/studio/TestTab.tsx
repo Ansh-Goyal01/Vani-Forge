@@ -126,7 +126,7 @@ function TestConsole({ agentId, version }: Props) {
                 {connected ? (isSpeaking ? "Agent is speaking" : "Agent is listening") : busy ? "Connecting..." : "Not on a call"}
               </p>
             </div>
-            <div className="text-right">
+            <div className="sm:text-right">
               <p className="label text-paper/80">Estimated latency</p>
               <p className="font-mono text-lg">{pingMs !== null ? `${pingMs} ms` : "not measured yet"}</p>
             </div>

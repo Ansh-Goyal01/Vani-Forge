@@ -49,7 +49,7 @@ const BAR_PROFILE = [0.35, 0.6, 0.45, 0.8, 0.55, 0.95, 0.7, 0.5, 0.85, 0.4, 0.75
 export function Waveform({ level = 0, active = false }: { level?: number; active?: boolean }) {
   const l = active ? Math.min(1, Math.max(0, level * 1.6)) : 0;
   return (
-    <div className="flex h-14 items-end gap-[3px]" role="img" aria-label={active ? "Call audio level" : "No call in progress"}>
+    <div className="flex h-10 items-end gap-[3px] sm:h-14" role="img" aria-label={active ? "Call audio level" : "No call in progress"}>
       {BAR_PROFILE.map((p, i) => (
         <span
           key={i}

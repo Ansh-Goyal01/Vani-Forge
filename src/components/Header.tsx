@@ -27,7 +27,15 @@ export function Header() {
 
   // On the landing page the marker follows the section in the middle of the screen.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 8);
+      // At the very bottom the last section may be too short to reach the middle line: pin the last band.
+      if (pathname === "/" && Math.ceil(window.scrollY + window.innerHeight) >= document.documentElement.scrollHeight - 4) {
+        const all = document.querySelectorAll<HTMLElement>("[data-band]");
+        const last = all[all.length - 1];
+        if (last) setSection({ hz: Number(last.dataset.band), title: (last.dataset.title ?? "").toUpperCase() });
+      }
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     let io: IntersectionObserver | undefined;

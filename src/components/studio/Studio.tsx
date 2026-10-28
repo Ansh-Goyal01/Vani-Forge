@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { VoiceIR } from "@/lib/voiceir";
 import type { History } from "@/lib/versions";
@@ -32,7 +33,18 @@ export function Studio({ agentId }: { agentId: string }) {
     api<AgentState>(`/api/agents/${agentId}`).then(setState).catch((e: Error) => setError(e.message));
   }, [agentId]);
 
-  if (error) return <div className="wrap py-12"><Notice tone="error">{error}</Notice></div>;
+  if (error)
+    return (
+      <div className="wrap max-w-3xl space-y-6 py-14">
+        <p className="label text-mute">Studio</p>
+        <h1 className="text-[clamp(2.25rem,5vw,3.5rem)]">This agent is not here.</h1>
+        <Notice tone="error">{error}</Notice>
+        <div className="flex flex-wrap gap-3">
+          <Link href="/#agents" className="btn btn-primary">Your agents <span aria-hidden className="arrow">→</span></Link>
+          <Link href="/#start" className="btn">Build a new one</Link>
+        </div>
+      </div>
+    );
   if (!state)
     return (
       <div className="wrap space-y-6 py-10" aria-busy="true" aria-label="Loading your agent">

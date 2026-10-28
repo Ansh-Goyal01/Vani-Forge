@@ -92,3 +92,18 @@ Ambiguities in `CLAUDE.md` and the simplest reasonable call made for each. Newes
 65. **No fake progress**: long operations (writing the promise sheet, chaos runs, refine) show indeterminate bars; the test call shows a real 90-second countdown bar.
 66. **The header is sticky from 768 px up only**, so it does not eat a phone screen.
 67. **The studio's big numeral is the live VoiceIR version** (`v1`, `v2`...), so it means something.
+
+## QA pass
+
+68. **End-to-end QA ran on the production build** in headless Chromium at 1440, 820 and 390 px, with the ElevenLabs and Gemini routes mocked in the browser only (no keys here). 94 checks covered:
+    - the landing page: nav anchors, CTA focus, reveals and the plate;
+    - the write flow (starters, promise edit/add/remove, the AI-disclosure guard, the voice filter, create);
+    - the studio: refine (propose, apply, undo), chaos, heal and re-test, deploy and observe;
+    - the low-credit guard, keyboard focus, reduced motion, 404 and a missing agent;
+    - quality bars: console errors, horizontal overflow, layout shift and frame rate.
+    All pass. The plate runs at 57-61 fps with zero layout shift.
+69. **Fixed during QA:**
+    - Cross-page hash links (studio → `/#agents`) now settle on the section after layout (`HashScroll`).
+    - The ruler pins the last band at the bottom of the page.
+    - A missing agent shows a recovery page with links back.
+    - The phone call console is left-aligned and more compact.
