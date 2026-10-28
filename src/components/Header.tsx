@@ -26,7 +26,7 @@ export function Header() {
         </nav>
         <div className="flex w-full items-center justify-between gap-3 md:w-auto">
           <CreditsBadge />
-          <Link href="/#agents" className="btn whitespace-nowrap !py-2 !px-4">
+          <Link href="/#agents" className="btn whitespace-nowrap !px-3 !py-2 !text-[10.5px] !tracking-[0.12em] sm:!px-4 sm:!text-[12px] sm:!tracking-[0.18em]">
             Open studio <span aria-hidden>→</span>
           </Link>
         </div>
