@@ -207,6 +207,18 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
   );
 }
 
+/** "kept 2 of 3": plum with a check when every run kept the promise, terracotta dot and bold when not. */
+function Tallied({ t }: { t: Tally }) {
+  if (!t.total) return <span className="font-mono text-sm">no score</span>;
+  const ok = t.kept === t.total;
+  return (
+    <span className={`inline-flex items-center gap-2 font-mono text-sm ${ok ? "" : "font-semibold text-problem"}`}>
+      {ok ? <Check /> : <span aria-hidden className="inline-block h-2.5 w-2.5 rounded-full bg-terracotta" />}
+      {keptLabel(t)}
+    </span>
+  );
+}
+
 function RunView({
   run,
   personas,
@@ -230,7 +242,7 @@ function RunView({
         <article key={r.promiseId} className="rule rounded-card bg-blush p-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="text-lg font-semibold">{promiseText(r.promiseId)}</h3>
-            <span className={`font-mono text-sm ${r.tally.kept < r.tally.total ? "font-semibold text-problem" : ""}`}>{r.tally.total ? keptLabel(r.tally) : "no score"}</span>
+            <Tallied t={r.tally} />
           </div>
           <ul className="mt-3 space-y-3">
             {run.items
@@ -244,7 +256,7 @@ function RunView({
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <span>{personaLabel(personas, item.personaId)}</span>
                       <span className="flex items-center gap-3">
-                        <span className="font-mono text-sm">{t.total ? keptLabel(t) : "no score"}</span>
+                        <Tallied t={t} />
                         {failing && (
                           <button type="button" className="btn" disabled={busy} onClick={() => onExplain(item.personaId, item.promiseId)}>
                             Explain and fix

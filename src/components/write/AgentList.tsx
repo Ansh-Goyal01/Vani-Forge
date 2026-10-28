@@ -18,19 +18,20 @@ export function AgentList() {
 
   return (
     <section>
-      <h2 className="text-2xl font-semibold">Your agents</h2>
+      <p className="label text-mute">The studio</p>
+      <h2 id="agents-title" className="mt-3 text-[clamp(2rem,4.4vw,3.75rem)]">Your agents</h2>
       {failed ? (
-        <p className="mt-2 text-mute">We could not read your saved agents.</p>
+        <p className="mt-4 text-mute">We could not read your saved agents.</p>
       ) : rows === null ? (
-        <p className="label mt-2 text-mute">Loading...</p>
+        <p className="label mt-4 text-mute">Loading...</p>
       ) : rows.length === 0 ? (
-        <p className="mt-2 text-mute">No agents yet. Describe one above and it will appear here.</p>
+        <p className="mt-4 rounded-card border-[1.5px] border-plum/50 bg-blush px-5 py-4">No agents yet. Describe one above and it will appear here.</p>
       ) : (
-        <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {rows.map((r) => (
             <li key={r.agentId}>
-              <Link href={`/studio/${r.agentId}`} className="rule block rounded-card bg-blush px-3 py-2 hover:bg-plum hover:text-blush">
-                <span className="block font-medium">{r.name}</span>
+              <Link href={`/studio/${r.agentId}`} className="rule block rounded-card bg-blush px-5 py-4 transition-colors hover:bg-plum hover:text-blush">
+                <span className="block font-display text-2xl">{r.name}</span>
                 <span className="label block opacity-70">Version {r.version}</span>
               </Link>
             </li>

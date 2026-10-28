@@ -11,10 +11,10 @@ export default async function PublicAgentPage({ params }: { params: Promise<{ ag
   const name = state?.ir.business.name;
 
   return (
-    <section className="mx-auto max-w-2xl py-10">
+    <section className="wrap max-w-3xl py-12">
       <p className="label text-mute">Voice assistant test page</p>
-      <h1 className="mt-2 text-4xl font-semibold">{name ? `Talk to ${name}` : "Talk to this voice assistant"}</h1>
-      <p className="mt-4 text-mute">
+      <h1 className="mt-3 text-[clamp(2.25rem,5vw,4rem)]">{name ? `Talk to ${name}` : "Talk to this voice assistant"}</h1>
+      <p className="mt-5 max-w-xl text-mute">
         This is an AI assistant. Press the call button in the corner and allow your microphone. Please do not share real personal details while it is being tested.
       </p>
       <Script src="https://unpkg.com/@elevenlabs/convai-widget-embed" strategy="afterInteractive" async />

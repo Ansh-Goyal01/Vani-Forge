@@ -30,12 +30,12 @@ export function StateGraph({ states }: { states: VoiceIR["states"] }) {
         id: s.id,
         position: { x: col * 240, y: row * 110 },
         data: { label: `${s.id}: ${s.goal}` },
-        style: { width: 200, fontSize: 12, border: "1.5px solid #111", borderRadius: 5, background: "#f2f0eb", padding: 8 },
+        style: { width: 200, fontSize: 12, fontFamily: "var(--font-jost), sans-serif", color: "#3a0f34", border: "1.5px solid #3a0f34", borderRadius: 12, background: "#e6ccd0", padding: 8 },
       };
     });
     const ids = new Set(states.map((s) => s.id));
     const edges: Edge[] = states.flatMap((s) =>
-      s.next.filter((n) => ids.has(n)).map((n) => ({ id: `${s.id}->${n}`, source: s.id, target: n, style: { stroke: "#ff4f12", strokeWidth: 1.5 } })),
+      s.next.filter((n) => ids.has(n)).map((n) => ({ id: `${s.id}->${n}`, source: s.id, target: n, style: { stroke: "#c75a3a", strokeWidth: 1.5 } })),
     );
     return { nodes, edges };
   }, [states]);
@@ -43,7 +43,7 @@ export function StateGraph({ states }: { states: VoiceIR["states"] }) {
   if (states.length === 0) return <p className="text-mute">This agent has no conversation steps yet.</p>;
 
   return (
-    <div className="rule h-96 rounded-card bg-blush" aria-label="Conversation flow, read only">
+    <div className="rule h-96 overflow-hidden rounded-card bg-shell" aria-label="Conversation flow, read only">
       <ReactFlow nodes={nodes} edges={edges} fitView nodesDraggable={false} nodesConnectable={false} elementsSelectable={false} proOptions={{ hideAttribution: true }}>
         <Background />
       </ReactFlow>
