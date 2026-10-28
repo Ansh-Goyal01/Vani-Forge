@@ -29,7 +29,7 @@ export function AgentList() {
         <ul className="mt-3 grid gap-2 sm:grid-cols-2">
           {rows.map((r) => (
             <li key={r.agentId}>
-              <Link href={`/studio/${r.agentId}`} className="rule block rounded-sq bg-paper px-3 py-2 hover:bg-ink hover:text-alu">
+              <Link href={`/studio/${r.agentId}`} className="rule block rounded-card bg-blush px-3 py-2 hover:bg-plum hover:text-blush">
                 <span className="block font-medium">{r.name}</span>
                 <span className="label block opacity-70">Version {r.version}</span>
               </Link>

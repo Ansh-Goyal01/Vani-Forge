@@ -1,29 +1,34 @@
 import Link from "next/link";
+import { Asterisk } from "./art";
 import { CreditsBadge } from "./CreditsBadge";
 
-const TICKS = ["20", "50", "100", "200", "500", "1k", "2k", "5k", "10k", "20k"];
+const LINKS = [
+  ["Home", "/"],
+  ["How it works", "/#how"],
+  ["Testing", "/#proof"],
+  ["Your agents", "/#agents"],
+] as const;
 
 export function Header() {
   return (
-    <header className="mb-10">
-      <div className="rule-b mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-        <Link href="/" className="font-head text-2xl font-semibold tracking-tight">
-          Vani<span className="text-signal">Forge</span>
+    <header className="relative z-20">
+      <div className="wrap flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-4">
+        <Link href="/" className="label flex items-center gap-2.5 !tracking-[0.28em]" aria-label="VaniForge home">
+          <Asterisk />
+          VaniForge
         </Link>
-        <CreditsBadge />
-      </div>
-      <div className="mx-auto hidden max-w-6xl px-5 pt-2 sm:block" aria-hidden>
-        <div className="relative h-4 border-b-[1.5px] border-ink/60">
-          <div className="absolute inset-x-0 bottom-0 flex justify-between">
-            {Array.from({ length: 61 }).map((_, i) => (
-              <span key={i} className={`w-px bg-ink/60 ${i % 6 === 0 ? "h-3" : "h-1.5"}`} />
-            ))}
-          </div>
-        </div>
-        <div className="label mt-1 flex justify-between text-[9px] text-mute">
-          {TICKS.map((t) => (
-            <span key={t}>{t} Hz</span>
+        <nav aria-label="Main" className="hidden items-center gap-8 md:flex">
+          {LINKS.map(([label, href]) => (
+            <Link key={label} href={href} className="label hover:underline underline-offset-8">
+              {label}
+            </Link>
           ))}
+        </nav>
+        <div className="flex items-center gap-3">
+          <CreditsBadge />
+          <Link href="/#agents" className="btn !py-2 !px-4">
+            Open studio <span aria-hidden>→</span>
+          </Link>
         </div>
       </div>
     </header>

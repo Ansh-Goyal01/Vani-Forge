@@ -100,7 +100,7 @@ export function WriteFlow() {
               placeholder="I run a dental clinic in Noida. I need a receptionist who..."
             />
             <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-              <span className={`label ${brief.length > LIMIT - 100 ? "text-signal" : "text-mute"}`}>{brief.length} / {LIMIT}</span>
+              <span className={`label ${brief.length > LIMIT - 100 ? "text-problem font-semibold" : "text-mute"}`}>{brief.length} / {LIMIT}</span>
               <div className="flex flex-wrap gap-2">
                 <MicButton onText={(t) => setBrief((b) => (b ? b + " " : "") + t.slice(0, LIMIT))} onError={(m) => setError({ message: m, keys: /key/i.test(m) })} />
                 <button type="button" className="btn" onClick={() => fileInput.current?.click()}>
@@ -125,7 +125,7 @@ export function WriteFlow() {
             <ul className="grid gap-2 sm:grid-cols-2">
               {EXAMPLE_PROMPTS.map((ex) => (
                 <li key={ex.title}>
-                  <button type="button" className="rule w-full rounded-sq bg-paper px-3 py-2 text-left hover:bg-ink hover:text-alu" onClick={() => setBrief(ex.text.slice(0, LIMIT))}>
+                  <button type="button" className="rule w-full rounded-card bg-blush px-3 py-2 text-left hover:bg-plum hover:text-blush" onClick={() => setBrief(ex.text.slice(0, LIMIT))}>
                     <span className="block font-medium">{ex.title}</span>
                     <span className="block truncate text-sm opacity-70">{ex.text}</span>
                   </button>

@@ -52,20 +52,20 @@ export function VoicePicker({ value, onChange }: { value: string; onChange: (id:
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <span className="label text-mute">Filter by use</span>
         {["all", ...useCases].map((u) => (
-          <button key={u} type="button" onClick={() => setUseCase(u)} className={`label rule rounded-sq px-2.5 py-1 ${useCase === u ? "bg-ink text-alu" : ""}`}>
+          <button key={u} type="button" onClick={() => setUseCase(u)} className={`label rule rounded-card px-2.5 py-1 ${useCase === u ? "bg-plum text-blush" : ""}`}>
             {u.replace(/_/g, " ")}
           </button>
         ))}
       </div>
       <ul className="grid max-h-72 gap-2 overflow-auto sm:grid-cols-2">
         {shown.map((v) => (
-          <li key={v.voiceId} className={`rule flex items-center justify-between gap-3 rounded-sq px-3 py-2 ${value === v.voiceId ? "bg-ink text-alu" : "bg-paper"}`}>
+          <li key={v.voiceId} className={`rule flex items-center justify-between gap-3 rounded-card px-3 py-2 ${value === v.voiceId ? "bg-plum text-blush" : "bg-blush"}`}>
             <button type="button" onClick={() => onChange(v.voiceId)} className="min-w-0 flex-1 text-left" aria-pressed={value === v.voiceId}>
               <span className="block truncate font-medium">{v.name}</span>
               <span className="label block truncate opacity-60">{Object.values(v.labels).slice(0, 3).join(" / ") || "no labels"}</span>
             </button>
             {v.previewUrl && (
-              <button type="button" className="label rule rounded-sq px-2 py-1" onClick={() => preview(v)}>
+              <button type="button" className="label rule rounded-card px-2 py-1" onClick={() => preview(v)}>
                 {playing === v.voiceId ? "Stop" : "Play"}
               </button>
             )}

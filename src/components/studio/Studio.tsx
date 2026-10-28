@@ -55,7 +55,7 @@ export function Studio({ agentId }: { agentId: string }) {
             role="tab"
             aria-selected={tab === t.id}
             onClick={() => setTab(t.id)}
-            className={`label px-4 py-2.5 ${tab === t.id ? "bg-ink text-alu" : "hover:bg-ink/10"}`}
+            className={`label px-4 py-2.5 ${tab === t.id ? "bg-plum text-blush" : "hover:bg-plum/10"}`}
           >
             {t.label}
           </button>

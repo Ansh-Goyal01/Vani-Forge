@@ -1,5 +1,6 @@
 "use client";
 
+import { ProblemDot } from "../ui";
 import { PROMISE_KIND_LABEL, disclosesAI, type PromiseKind, type VoiceIRDraft } from "@/lib/voiceir";
 
 const KINDS: PromiseKind[] = ["must", "never", "handoff"];
@@ -25,7 +26,8 @@ export function PromiseSheet({ draft, onChange }: { draft: VoiceIRDraft; onChang
           onChange={(e) => onChange({ ...draft, persona: { ...draft.persona, firstMessage: e.target.value } })}
         />
         {!disclosureOk && (
-          <p className="mt-1 text-sm text-signal" role="alert">
+          <p className="mt-1 text-sm text-problem" role="alert">
+            <ProblemDot />
             The first message must say it is an AI assistant, so callers always know.
           </p>
         )}
