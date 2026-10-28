@@ -1,93 +1,68 @@
 @import "tailwindcss";
 
 /*
- * Editorial design language: dusty mauve ground, deep plum ink, terracotta for shapes and problems.
- * Tints are derived from those three only.
+ * "Swiss Acoustic Industrial", matched to the VaniForge v2 deck (sampled from the rendered PDF):
+ * paper #E7E5E0, ink #111111, signal orange #FF4F13, graphite #181818, card #F4F3EF.
  */
 @theme {
-  --color-mauve: #c9a0a7;
-  --color-plum: #3a0f34;
-  --color-terracotta: #c75a3a;
-  --color-blush: #e6ccd0;
-  --color-shell: #f2e4e5;
-  --color-mauve-deep: #b98990;
-  /* Secondary text: plum at 85% on mauve (5.4:1). The brief's 70% measures 3.98:1 and fails AA. */
-  --color-mute: #4d2142;
-  /* Terracotta mixed 50/50 with plum: small "problem" text on blush/shell at 5.5:1. */
-  --color-problem: #803437;
-  --color-plum-hover: #52204a;
-  --radius-card: 18px;
+  --color-paper: #e7e5e0;
+  --color-ink: #111111;
+  --color-signal: #ff4f13;
+  --color-graphite: #181818;
+  --color-card: #f4f3ef;
+  --color-mute: #54534f;
+  /* Orange darkened for small text on paper/card (4.6:1); the pure orange is for numerals, shapes and dark panels. */
+  --color-problem: #c73a0b;
+  --radius-card: 4px;
 }
 
 @theme inline {
-  --font-display: var(--font-bodoni), "Bodoni 72", Didot, serif;
-  --font-sans: var(--font-jost), "Jost", system-ui, sans-serif;
+  --font-display: var(--font-inter-tight), "Inter Tight", "Inter", system-ui, sans-serif;
+  --font-sans: var(--font-inter), "Inter", system-ui, sans-serif;
   --font-mono: var(--font-jbm), ui-monospace, monospace;
 }
 
 html {
   scroll-behavior: smooth;
-  background: var(--color-mauve);
+  background: var(--color-paper);
 }
 
+/* Fine horizontal banding like the deck's paper. */
 body {
-  background: var(--color-mauve);
-  color: var(--color-plum);
+  background-color: var(--color-paper);
+  background-image: repeating-linear-gradient(to bottom, rgba(17, 17, 17, 0.022) 0, rgba(17, 17, 17, 0.022) 1px, transparent 1px, transparent 3px);
+  color: var(--color-ink);
   font-family: var(--font-sans);
-  font-size: 17px;
-  line-height: 1.55;
+  font-size: 16px;
+  line-height: 1.5;
   min-height: 100vh;
-  position: relative;
-}
-
-/* Paper grain (about 6%) and a very soft vignette, over everything, never blocking clicks. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
-  opacity: 0.06;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-}
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 59;
-  pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(58, 15, 52, 0.12) 100%);
 }
 
 h1,
 h2,
 h3 {
   font-family: var(--font-display);
-  font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.04;
-  font-optical-sizing: auto;
-}
-h1,
-h2 {
-  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
 }
 h3 {
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   line-height: 1.15;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-plum);
-  outline-offset: 3px;
+  outline: 2px solid var(--color-signal);
+  outline-offset: 2px;
 }
-.on-plum :focus-visible,
+.on-dark :focus-visible,
 .panel-dark :focus-visible {
-  outline-color: var(--color-blush);
+  outline-color: var(--color-signal);
 }
 
 .wrap {
-  max-width: 75rem;
+  max-width: 80rem;
   margin: 0 auto;
   padding-left: 1.25rem;
   padding-right: 1.25rem;
@@ -96,20 +71,20 @@ h3 {
   .wrap { padding-left: 2rem; padding-right: 2rem; }
 }
 
-/* Tiny uppercase tracked labels (nav, buttons, captions). */
+/* Mono uppercase tracked labels, as in the deck's spec lines. */
 .label {
-  font-family: var(--font-sans);
-  font-size: 11.5px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
 }
 
 .rule {
-  border: 1.5px solid var(--color-plum);
+  border: 1.5px solid var(--color-ink);
 }
 .rule-b {
-  border-bottom: 1.5px solid var(--color-plum);
+  border-bottom: 1.5px solid var(--color-ink);
 }
 
 .btn {
@@ -117,117 +92,122 @@ h3 {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  border: 1.5px solid var(--color-plum);
-  border-radius: 999px;
-  padding: 12px 22px;
+  letter-spacing: 0.1em;
+  border: 1.5px solid var(--color-ink);
+  border-radius: var(--radius-card);
+  padding: 11px 18px;
   background: transparent;
-  color: var(--color-plum);
+  color: var(--color-ink);
   cursor: pointer;
   text-decoration: none;
-  transition: background-color 0.2s, color 0.2s;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
 }
 .btn:hover:not(:disabled) {
-  background: var(--color-plum);
-  color: var(--color-blush);
+  background: var(--color-ink);
+  color: var(--color-paper);
 }
 .btn-primary {
-  background: var(--color-plum);
-  color: var(--color-blush);
+  background: var(--color-signal);
+  border-color: var(--color-ink);
+  color: var(--color-ink);
 }
 .btn-primary:hover:not(:disabled) {
-  background: var(--color-plum-hover);
+  background: var(--color-ink);
+  color: var(--color-signal);
 }
 .btn:disabled {
-  opacity: 0.45;
+  opacity: 0.4;
   cursor: not-allowed;
 }
-.on-plum .btn {
-  border-color: var(--color-blush);
-  color: var(--color-blush);
+.on-dark .btn {
+  border-color: var(--color-paper);
+  color: var(--color-paper);
 }
-.on-plum .btn:hover:not(:disabled) {
-  background: var(--color-blush);
-  color: var(--color-plum);
+.on-dark .btn:hover:not(:disabled) {
+  background: var(--color-paper);
+  color: var(--color-ink);
 }
-.on-plum .btn-primary {
-  background: var(--color-blush);
-  color: var(--color-plum);
+.on-dark .btn-primary {
+  background: var(--color-signal);
+  border-color: var(--color-signal);
+  color: var(--color-ink);
 }
-.on-plum .btn-primary:hover:not(:disabled) {
-  background: var(--color-shell);
+.on-dark .btn-primary:hover:not(:disabled) {
+  background: var(--color-paper);
+  border-color: var(--color-paper);
+  color: var(--color-ink);
 }
 
 .field {
   width: 100%;
-  background: var(--color-shell);
-  border: 1.5px solid var(--color-plum);
-  border-radius: 14px;
-  padding: 11px 14px;
-  font-size: 16px;
-  color: var(--color-plum);
+  background: var(--color-card);
+  border: 1.5px solid var(--color-ink);
+  border-radius: var(--radius-card);
+  padding: 10px 12px;
+  font-size: 15px;
+  color: var(--color-ink);
 }
 .field::placeholder {
   color: var(--color-mute);
-  opacity: 0.8;
+  opacity: 0.75;
 }
 
+/* Graphite panels, as in the deck: dark, small radius, soft shadow. */
 .panel-dark {
-  background: var(--color-plum);
-  color: var(--color-blush);
-  border-radius: var(--radius-card);
-}
-
-/* Printed menu / order card: blush with a thin double plum rule. */
-.menu-card {
-  background: var(--color-blush);
+  background: var(--color-graphite);
+  color: var(--color-paper);
   border-radius: 6px;
-  border: 1.5px solid var(--color-plum);
-  box-shadow: inset 0 0 0 5px var(--color-blush), inset 0 0 0 6.5px var(--color-plum);
-  padding: clamp(1.75rem, 4vw, 3.5rem);
+  box-shadow: 0 14px 30px -18px rgba(17, 17, 17, 0.6);
 }
 
-/* Menu leader: dotted line between an item and its price. */
+/* Spec-sheet card: card fill, ink hairline. */
+.spec-card {
+  background: var(--color-card);
+  border: 1.5px solid var(--color-ink);
+  border-radius: var(--radius-card);
+  padding: clamp(1.5rem, 3.5vw, 3rem);
+}
+
+/* Spec table rows: mono label left, value right, ink rules between. */
+.spec-row {
+  display: grid;
+  grid-template-columns: minmax(7rem, 11rem) 1fr;
+  gap: 1rem;
+  align-items: baseline;
+  border-top: 1.5px solid var(--color-ink);
+  padding: 0.7rem 0;
+}
+.spec-row:last-child {
+  border-bottom: 1.5px solid var(--color-ink);
+}
+
+/* Leader line between an item and its type, kept from the menu idea but drawn as a thin rule. */
 .leader {
   flex: 1 1 1.5rem;
   min-width: 1rem;
   align-self: flex-end;
   margin-bottom: 0.9rem;
-  border-bottom: 2px dotted var(--color-plum);
-  opacity: 0.55;
+  border-bottom: 1px dotted var(--color-ink);
+  opacity: 0.5;
 }
 
-/* ---- motion: one load sequence, then only a very slow cloud drift ---- */
-@keyframes rise-in {
-  from { opacity: 0; transform: translateY(48px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+/* ---- motion: one short load sequence, nothing after ---- */
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(24px); }
+  from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: translateY(0); }
 }
-@keyframes cloud-in-left {
-  from { opacity: 0; transform: translateX(-40px); }
-  to { opacity: 1; transform: translateX(0); }
+@keyframes sweep {
+  from { transform: translateX(-6px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
-@keyframes cloud-in-right {
-  from { opacity: 0; transform: translateX(40px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-@keyframes drift {
-  from { transform: translateX(0); }
-  to { transform: translateX(18px); }
-}
-.anim-rise { animation: rise-in 1s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-.anim-fade { animation: fade-up 1s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-.anim-cloud-l { animation: cloud-in-left 1.2s 0.3s ease-out both; }
-.anim-cloud-r { animation: cloud-in-right 1.2s 0.3s ease-out both; }
-.drift { animation: drift 24s 1.6s ease-in-out infinite alternate; }
-.drift-rev { animation: drift 28s 1.6s ease-in-out infinite alternate-reverse; }
+.anim-fade { animation: fade-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.anim-fade-2 { animation: fade-up 0.7s 0.12s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.anim-fade-3 { animation: fade-up 0.8s 0.24s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.anim-marker { animation: sweep 0.6s 0.3s ease-out both; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -236,40 +216,5 @@ h3 {
   *::after {
     animation: none !important;
     transition: none !important;
-  }
-}
-
-/* ---- hero ---- */
-.hero-word {
-  font-family: var(--font-display);
-  font-weight: 500;
-  line-height: 0.86;
-  letter-spacing: -0.04em;
-  text-transform: uppercase;
-  font-size: 28vw;
-  font-optical-sizing: auto;
-  font-variation-settings: "opsz" 96;
-}
-.hero-image-box {
-  position: relative;
-  aspect-ratio: 3 / 4;
-  width: min(78vw, 24rem);
-  margin: 0 auto;
-}
-.hero-mask {
-  -webkit-mask-image: radial-gradient(ellipse 68% 68% at 50% 50%, #000 58%, transparent 100%);
-  mask-image: radial-gradient(ellipse 68% 68% at 50% 50%, #000 58%, transparent 100%);
-}
-@media (min-width: 1024px) {
-  .hero-word {
-    font-size: min(17.5rem, calc((100svh - 7rem) / 3.1));
-  }
-  .hero-word-rot {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-  }
-  .hero-image-box {
-    width: auto;
-    height: min(calc(100svh - 9rem), 46rem);
   }
 }

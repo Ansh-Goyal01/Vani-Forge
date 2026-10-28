@@ -80,7 +80,7 @@ export function WriteFlow() {
 
   return (
     <div className="space-y-10">
-      <div className="menu-card">
+      <div className="spec-card">
         <p className="label text-mute">The brief</p>
         <h2 className="mt-3 max-w-2xl text-[clamp(2rem,4.2vw,3.5rem)] !normal-case">Tell us about your business.</h2>
         <p className="mt-4 max-w-2xl text-mute">
@@ -123,7 +123,7 @@ export function WriteFlow() {
           <ul className="grid gap-3 sm:grid-cols-2">
             {EXAMPLE_PROMPTS.map((ex) => (
               <li key={ex.title} className="min-w-0">
-                <button type="button" className="rule w-full rounded-card bg-shell px-4 py-3 text-left transition-colors hover:bg-plum hover:text-blush" onClick={() => setBrief(ex.text.slice(0, LIMIT))}>
+                <button type="button" className="rule w-full rounded-card bg-card px-4 py-3 text-left transition-colors hover:bg-ink hover:text-paper" onClick={() => setBrief(ex.text.slice(0, LIMIT))}>
                   <span className="block font-display text-lg">{ex.title}</span>
                   <span className="block truncate text-sm opacity-80">{ex.text}</span>
                 </button>
@@ -143,7 +143,7 @@ export function WriteFlow() {
       {error && <Notice tone={error.keys ? "keys" : "error"}>{error.message}</Notice>}
 
       {draft && (
-        <div className="menu-card space-y-12">
+        <div className="spec-card space-y-12">
           <div>
             <p className="label text-mute">The promise sheet</p>
             <h2 className="mt-3 text-[clamp(2rem,4.2vw,3.5rem)] !normal-case">Check the promises.</h2>
@@ -154,7 +154,7 @@ export function WriteFlow() {
           <PromiseSheet draft={draft} onChange={setDraft} />
 
           <div>
-            <h3 className="mb-4 border-b-[1.5px] border-plum pb-2 text-[1.15rem] uppercase tracking-[0.12em]">Pick a voice</h3>
+            <h3 className="mb-4 border-b-[1.5px] border-ink pb-2 text-[1.15rem] uppercase tracking-[0.12em]">Pick a voice</h3>
             <VoicePicker value={voiceId} onChange={setVoiceId} />
           </div>
 

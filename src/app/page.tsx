@@ -9,12 +9,12 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <section id="start" aria-label="Write your brief" className="wrap scroll-mt-6 py-16">
+      <section id="start" aria-label="Write your brief" className="wrap scroll-mt-6 py-10">
         <WriteFlow />
       </section>
       <HowItWorks />
       <Proof />
-      <section id="agents" aria-labelledby="agents-title" className="wrap scroll-mt-6 py-20">
+      <section id="agents" aria-labelledby="agents-title" className="wrap scroll-mt-6 py-16">
         <AgentList />
       </section>
       <Footer />

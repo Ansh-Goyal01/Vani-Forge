@@ -43,7 +43,7 @@ export function StateGraph({ states }: { states: VoiceIR["states"] }) {
   if (states.length === 0) return <p className="text-mute">This agent has no conversation steps yet.</p>;
 
   return (
-    <div className="rule h-96 overflow-hidden rounded-card bg-shell" aria-label="Conversation flow, read only">
+    <div className="rule h-96 overflow-hidden rounded-card bg-card" aria-label="Conversation flow, read only">
       <ReactFlow nodes={nodes} edges={edges} fitView nodesDraggable={false} nodesConnectable={false} elementsSelectable={false} proOptions={{ hideAttribution: true }}>
         <Background />
       </ReactFlow>

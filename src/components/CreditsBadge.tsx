@@ -37,8 +37,8 @@ export function CreditsBadge() {
   const low = credits && credits.remaining !== null && !credits.guard.allowed;
   return (
     <div className="flex items-center gap-3">
-      <span className="label rule inline-flex items-center whitespace-nowrap rounded-full px-3 py-1.5 !text-[10px] !tracking-[0.1em] sm:!text-[11.5px] sm:!tracking-[0.18em]" title={credits?.guard.reason}>
-        {low && <span aria-hidden className="mr-2 inline-block h-2 w-2 rounded-full bg-terracotta" />}
+      <span className="label rule inline-flex items-center whitespace-nowrap rounded-card px-3 py-1.5 !text-[10px] sm:!text-[11px]" title={credits?.guard.reason}>
+        {low && <span aria-hidden className="mr-2 inline-block h-2 w-2 rounded-full bg-signal" />}
         {text}
       </span>
       {credits && credits.remaining !== null && credits.remaining < 6500 && (

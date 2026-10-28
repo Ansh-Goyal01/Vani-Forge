@@ -56,7 +56,7 @@ export function ObserveTab({ agentId, state }: { agentId: string; state: AgentSt
           ["Talk time", mmss(totalSecs)],
           ["Judged successful", judged.length ? `${ok} of ${judged.length}` : "no scored calls yet"],
         ].map(([k, v]) => (
-          <div key={k} className="rule rounded-card bg-blush p-4">
+          <div key={k} className="rule rounded-card bg-card p-4">
             <p className="label text-mute">{k}</p>
             <p className="mt-1 font-display text-3xl font-semibold">{v}</p>
           </div>
@@ -70,7 +70,7 @@ export function ObserveTab({ agentId, state }: { agentId: string; state: AgentSt
           <ul className="space-y-2">
             {rows.map((r) => (
               <li key={r.conversationId}>
-                <button type="button" onClick={() => show(r.conversationId)} className={`rule w-full rounded-card px-3 py-2 text-left ${open === r.conversationId ? "bg-plum text-blush" : "bg-blush"}`}>
+                <button type="button" onClick={() => show(r.conversationId)} className={`rule w-full rounded-card px-3 py-2 text-left ${open === r.conversationId ? "bg-ink text-paper" : "bg-card"}`}>
                   <span className="block font-medium">{r.title || "Call"}</span>
                   <span className="label block opacity-70">
                     {new Date(r.startTimeUnixSecs * 1000).toLocaleString()} / {mmss(r.durationSecs)} / {r.status}
@@ -98,7 +98,7 @@ export function ObserveTab({ agentId, state }: { agentId: string; state: AgentSt
                   ) : (
                     <ul className="space-y-2">
                       {detail.criteria.map((c) => (
-                        <li key={c.criteriaId} className="rule rounded-card bg-blush px-3 py-2">
+                        <li key={c.criteriaId} className="rule rounded-card bg-card px-3 py-2">
                           <span className={`label mr-2 ${c.result === "failure" ? "font-semibold text-problem" : ""}`}>{RESULT_LABEL[c.result] ?? c.result}</span>
                           {promiseFor(c.criteriaId)}
                           {c.rationale && <p className="mt-1 text-sm text-mute">{c.rationale}</p>}
@@ -108,13 +108,13 @@ export function ObserveTab({ agentId, state }: { agentId: string; state: AgentSt
                   )}
                 </div>
                 <div className="panel-dark p-4">
-                  <p className="label mb-2 text-blush/80">Transcript</p>
+                  <p className="label mb-2 text-paper/80">Transcript</p>
                   <ul className="space-y-2">
                     {detail.transcript.map((t, i) => (
                       <li key={i}>
-                        <span className={`label mr-2 ${t.role === "agent" ? "font-semibold" : "text-blush/70"}`}>{t.role === "agent" ? "Agent" : "Caller"}</span>
+                        <span className={`label mr-2 ${t.role === "agent" ? "font-semibold" : "text-paper/70"}`}>{t.role === "agent" ? "Agent" : "Caller"}</span>
                         {t.message}
-                        {t.interrupted && <span className="label ml-2"><span aria-hidden className="mr-1 inline-block h-2 w-2 rounded-full bg-terracotta" />interrupted</span>}
+                        {t.interrupted && <span className="label ml-2"><span aria-hidden className="mr-1 inline-block h-2 w-2 rounded-full bg-signal" />interrupted</span>}
                       </li>
                     ))}
                   </ul>

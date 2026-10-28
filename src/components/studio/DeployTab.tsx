@@ -37,7 +37,7 @@ export function DeployTab({ agentId, state }: { agentId: string; state: AgentSta
         <h2 className="text-3xl font-semibold">Share a test page.</h2>
         <p className="mt-2 max-w-2xl text-mute">Anyone with this link can talk to your agent in their browser. It only works while this app is reachable at that address.</p>
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <code className="rule rounded-card bg-blush px-3 py-2 font-mono text-sm">{link}</code>
+          <code className="rule rounded-card bg-card px-3 py-2 font-mono text-sm">{link}</code>
           <Copy text={link} label="Copy link" />
           <a className="btn" href={`/a/${agentId}`} target="_blank" rel="noreferrer">Open</a>
         </div>
@@ -60,7 +60,7 @@ export function DeployTab({ agentId, state }: { agentId: string; state: AgentSta
           <li>Buy or port a number with Twilio or Exotel (Exotel suits Indian numbers).</li>
           <li>In the ElevenLabs dashboard open Agents, then Phone Numbers, and choose Import number (Twilio or SIP trunk for Exotel).</li>
           <li>Enter the number and the provider credentials, then save.</li>
-          <li>Open the number, assign agent <code className="font-mono text-plum">{agentId}</code>, and save.</li>
+          <li>Open the number, assign agent <code className="font-mono text-ink">{agentId}</code>, and save.</li>
           <li>Call the number from your phone to test.</li>
         </ol>
         <button type="button" className="btn mt-4" disabled>Phone: not connected</button>

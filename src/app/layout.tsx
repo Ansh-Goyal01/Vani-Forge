@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/Header";
-import { bodoni, jetbrains, jost } from "./fonts";
+import { inter, interTight, jetbrains } from "./fonts";
 
 export const metadata: Metadata = {
   title: "VaniForge",
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${bodoni.variable} ${jost.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`${interTight.variable} ${inter.variable} ${jetbrains.variable}`}>
       <body>
         <Header />
         <main>{children}</main>

@@ -4,7 +4,7 @@ import { ConversationProvider, useConversationControls, useConversationMode, use
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TEST_CALL_SECONDS } from "@/lib/credits";
 import { useCredits } from "../CreditsBadge";
-import { Notice, Rings, XRay, api } from "../ui";
+import { Notice, Waveform, XRay, api } from "../ui";
 
 type Line = { id: number; kind: "user" | "agent" | "interrupt"; text: string };
 
@@ -113,18 +113,18 @@ function TestConsole({ agentId, version }: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="panel-dark on-plum grid items-center gap-6 p-6 sm:grid-cols-[auto_1fr] sm:p-8">
-        <Rings level={speakingLevel} active={connected} />
+      <div className="panel-dark on-dark grid items-center gap-6 p-6 sm:grid-cols-[auto_1fr] sm:p-8">
+        <Waveform level={speakingLevel} active={connected} />
         <div>
           <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="label text-blush/80">Talking to version {version}</p>
+              <p className="label text-paper/80">Talking to version {version}</p>
               <p className="font-display text-3xl">
                 {connected ? (isSpeaking ? "Agent is speaking" : "Agent is listening") : busy ? "Connecting..." : "Not on a call"}
               </p>
             </div>
             <div className="text-right">
-              <p className="label text-blush/80">Estimated latency</p>
+              <p className="label text-paper/80">Estimated latency</p>
               <p className="font-mono text-lg">{pingMs !== null ? `${pingMs} ms` : "not measured yet"}</p>
             </div>
           </div>
@@ -141,7 +141,7 @@ function TestConsole({ agentId, version }: Props) {
                 Call ends in <strong>{secondsLeft}s</strong>
               </span>
             )}
-            {!connected && <span className="label text-blush/80">Calls end by themselves after {TEST_CALL_SECONDS} seconds to save credits.</span>}
+            {!connected && <span className="label text-paper/80">Calls end by themselves after {TEST_CALL_SECONDS} seconds to save credits.</span>}
           </div>
         </div>
       </div>
@@ -157,17 +157,17 @@ function TestConsole({ agentId, version }: Props) {
       {error && <Notice tone="error">{error}</Notice>}
 
       <div className="panel-dark min-h-40 p-6">
-        <p className="label mb-3 text-blush/80">Live transcript</p>
+        <p className="label mb-3 text-paper/80">Live transcript</p>
         {lines.length === 0 ? (
-          <p className="text-blush/80">The conversation will appear here as you speak.</p>
+          <p className="text-paper/80">The conversation will appear here as you speak.</p>
         ) : (
           <ul className="space-y-2" aria-live="polite">
             {lines.map((l) =>
               l.kind === "interrupt" ? (
-                <li key={l.id} className="label"><span aria-hidden className="mr-2 inline-block h-2 w-2 rounded-full bg-terracotta" />{l.text}</li>
+                <li key={l.id} className="label"><span aria-hidden className="mr-2 inline-block h-2 w-2 rounded-full bg-signal" />{l.text}</li>
               ) : (
                 <li key={l.id}>
-                  <span className={`label mr-2 ${l.kind === "agent" ? "font-semibold" : "text-blush/70"}`}>{l.kind === "agent" ? "Agent" : "You"}</span>
+                  <span className={`label mr-2 ${l.kind === "agent" ? "font-semibold" : "text-paper/70"}`}>{l.kind === "agent" ? "Agent" : "You"}</span>
                   {l.text}
                 </li>
               ),

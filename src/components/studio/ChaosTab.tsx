@@ -121,7 +121,7 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
         </p>
         <ul className="mt-4 grid gap-2 sm:grid-cols-2">
           {personas.map((p) => (
-            <li key={p.id} className="rule rounded-card bg-blush px-3 py-2">
+            <li key={p.id} className="rule rounded-card bg-card px-3 py-2">
               <span className="block font-medium">{p.name}</span>
               <span className="block text-sm text-mute">{p.summary}</span>
             </li>
@@ -146,7 +146,7 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
       {runs !== null && runs.length === 0 && !busy && <Notice>No chaos runs yet. Press a run button to start. Nothing is shown until a real run finishes.</Notice>}
 
       {healed.map((h) => (
-        <section key={`${h.version}-${h.promiseId}`} className="rule rounded-card border-terracotta bg-blush p-5">
+        <section key={`${h.version}-${h.promiseId}`} className="rule rounded-card border-signal bg-card p-5">
           <p className="label flex items-center gap-2"><Check /> Fixed and re-tested</p>
           <p className="mt-1 font-medium">{promiseText(h.promiseId)}</p>
           <p className="mt-2 font-mono text-sm">
@@ -156,11 +156,11 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
       ))}
 
       {proposal && (
-        <section className="rule rounded-card bg-blush p-5">
+        <section className="rule rounded-card bg-card p-5">
           <p className="label text-mute">Proposed fix for: {proposal.p.personaName}</p>
           <h3 className="mt-1 text-xl font-semibold">{proposal.p.promiseText}</h3>
           {proposal.p.evidence && (
-            <blockquote className="mt-3 border-l-[3px] border-terracotta pl-3">
+            <blockquote className="mt-3 border-l-[3px] border-signal pl-3">
               <span className="label block text-mute">What the agent said</span>
               {proposal.p.evidence}
             </blockquote>
@@ -171,7 +171,7 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
               <li key={i}>
                 <p className="label text-mute">{c.label}</p>
                 {c.before !== undefined && <p className="text-sm line-through opacity-60">{typeof c.before === "string" ? c.before : JSON.stringify(c.before)}</p>}
-                <p className="border-l-[3px] border-terracotta pl-3">{typeof c.after === "string" ? c.after : JSON.stringify(c.after)}</p>
+                <p className="border-l-[3px] border-signal pl-3">{typeof c.after === "string" ? c.after : JSON.stringify(c.after)}</p>
               </li>
             ))}
           </ul>
@@ -191,7 +191,7 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
         <section>
           <div role="tablist" className="mb-4 flex gap-1">
             {(["text", "audio"] as const).map((t) => (
-              <button key={t} role="tab" aria-selected={tier === t} onClick={() => setTier(t)} className={`label rule rounded-card px-3 py-1.5 ${tier === t ? "bg-plum text-blush" : ""}`}>
+              <button key={t} role="tab" aria-selected={tier === t} onClick={() => setTier(t)} className={`label rule rounded-card px-3 py-1.5 ${tier === t ? "bg-ink text-paper" : ""}`}>
                 {t === "text" ? "Text tests" : "Audio tests"}
               </button>
             ))}
@@ -207,13 +207,13 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
   );
 }
 
-/** "kept 2 of 3": plum with a check when every run kept the promise, terracotta dot and bold when not. */
+/** "kept 2 of 3": ink with a check when every run kept the promise, orange dot and bold when not. */
 function Tallied({ t }: { t: Tally }) {
   if (!t.total) return <span className="font-mono text-sm">no score</span>;
   const ok = t.kept === t.total;
   return (
     <span className={`inline-flex items-center gap-2 font-mono text-sm ${ok ? "" : "font-semibold text-problem"}`}>
-      {ok ? <Check /> : <span aria-hidden className="inline-block h-2.5 w-2.5 rounded-full bg-terracotta" />}
+      {ok ? <Check /> : <span aria-hidden className="inline-block h-2.5 w-2.5 rounded-full bg-signal" />}
       {keptLabel(t)}
     </span>
   );
@@ -239,7 +239,7 @@ function RunView({
       </p>
       {run.error && <Notice tone="error">{run.error}</Notice>}
       {rollupByPromise(run).map((r) => (
-        <article key={r.promiseId} className="rule rounded-card bg-blush p-4">
+        <article key={r.promiseId} className="rule rounded-card bg-card p-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h3 className="text-lg font-semibold">{promiseText(r.promiseId)}</h3>
             <Tallied t={r.tally} />
@@ -252,7 +252,7 @@ function RunView({
                 const failing = item.samples.find((s) => !s.passed && !s.unscored);
                 const shown = failing ?? item.samples[0];
                 return (
-                  <li key={item.personaId} className="border-t border-plum/20 pt-3">
+                  <li key={item.personaId} className="border-t border-ink/20 pt-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <span>{personaLabel(personas, item.personaId)}</span>
                       <span className="flex items-center gap-3">
@@ -268,9 +268,9 @@ function RunView({
                       <ul className="mt-2 space-y-2 text-sm">
                         {shown.heard.map((h, i) => (
                           <li key={i} className="panel-dark px-3 py-2">
-                            <span className="label text-blush/80">Caller said</span> {h.said}
+                            <span className="label text-paper/80">Caller said</span> {h.said}
                             <br />
-                            <span className="label"><span aria-hidden className="mr-1.5 inline-block h-2 w-2 rounded-full bg-terracotta" />Agent heard</span> {h.heard || "nothing"}
+                            <span className="label"><span aria-hidden className="mr-1.5 inline-block h-2 w-2 rounded-full bg-signal" />Agent heard</span> {h.heard || "nothing"}
                           </li>
                         ))}
                       </ul>
