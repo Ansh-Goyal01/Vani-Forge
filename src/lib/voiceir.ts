@@ -54,6 +54,15 @@ export const VoiceIR = z.object({
   tools: z.array(VoiceIRTool),
   knowledge: z.array(z.object({ title: z.string().min(1), text: z.string() })),
   lexicon: z.array(z.object({ grapheme: z.string().min(1), alias: z.string().min(1) })),
+  /** Speech-handling tweaks, usually added by Heal. If missing, add the whole object. */
+  speech: z
+    .object({
+      /** Backchannel words that must not interrupt the agent, e.g. "haan ji". */
+      interruptionIgnoreTerms: z.array(z.string().min(1)),
+      /** Words the speech recogniser should favour, e.g. names. */
+      asrKeywords: z.array(z.string().min(1)),
+    })
+    .optional(),
 });
 export type VoiceIR = z.infer<typeof VoiceIR>;
 

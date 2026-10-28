@@ -1,5 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import type { ChaosRun } from "./chaos";
 import { VoiceIR } from "./voiceir";
 import { emptyHistory, type History } from "./versions";
 
@@ -89,4 +90,37 @@ export async function listAgentIds(): Promise<string[]> {
 
 export async function deleteAgentRecord(agentId: string): Promise<void> {
   await fs.rm(agentDir(agentId), { recursive: true, force: true });
+}
+
+// ---- chaos runs ----
+const chaosDir = (agentId: string) => path.join(DATA_DIR, "chaos", safeId(agentId));
+export const saveRun = (run: ChaosRun) => writeJson(path.join(chaosDir(run.agentId), `${safeId(run.runId)}.json`), run);
+export const getRun = (agentId: string, runId: string) => readJson<ChaosRun>(path.join(chaosDir(agentId), `${safeId(runId)}.json`));
+export async function listRuns(agentId: string): Promise<ChaosRun[]> {
+  try {
+    const files = await fs.readdir(chaosDir(agentId));
+    const runs = await Promise.all(files.filter((f) => f.endsWith(".json") && f !== "tests.json").map((f) => readJson<ChaosRun>(path.join(chaosDir(agentId), f))));
+    return runs.filter((r): r is ChaosRun => r !== null).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  } catch {
+    return [];
+  }
+}
+
+// ---- simulation test ids (so a test is created once per persona+promise) ----
+const testIdsFile = (agentId: string) => path.join(chaosDir(agentId), "tests.json");
+export const getTestIds = async (agentId: string) => (await readJson<Record<string, string>>(testIdsFile(agentId))) ?? {};
+export const saveTestIds = (agentId: string, ids: Record<string, string>) => writeJson(testIdsFile(agentId), ids);
+
+// ---- cached persona audio ----
+export const audioPath = (hash: string) => path.join(DATA_DIR, "audio", `${safeId(hash)}.pcm`);
+export async function readAudio(hash: string): Promise<Buffer | null> {
+  try {
+    return await fs.readFile(audioPath(hash));
+  } catch {
+    return null;
+  }
+}
+export async function writeAudio(hash: string, data: Buffer): Promise<void> {
+  await fs.mkdir(path.dirname(audioPath(hash)), { recursive: true });
+  await fs.writeFile(audioPath(hash), data);
 }
