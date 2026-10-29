@@ -12,17 +12,20 @@ async function main() {
   const [agentId, ...personaIds] = process.argv.slice(2);
   if (!agentId) {
     console.log(`Usage: npm run audio-chaos -- <agentId> [personaId ...]\nPersonas: ${PERSONAS.map((p) => p.id).join(", ")}`);
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
   const credits = await getCreditStatus();
   if (!credits.guard.allowed) {
     console.log("Blocked: " + credits.guard.reason);
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
   const state = await getAgentState(agentId);
   if (!state) {
     console.log("No such agent in data/agents. Create one in the app or run `npm run seed`.");
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
   const run = await runAudioChaos(agentId, state.ir, { personaIds: personaIds.length ? personaIds : undefined });
   console.log(`Run ${run.runId} (version ${run.version})`);
@@ -37,5 +40,5 @@ async function main() {
 
 main().catch((e) => {
   console.error("audio-chaos failed:", e instanceof Error ? e.message : e);
-  process.exit(1);
+  process.exitCode = 1;
 });

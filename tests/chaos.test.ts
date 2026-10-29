@@ -32,6 +32,21 @@ describe("chaos planning and results", () => {
     expect(successCondition("handoff", "x")).toContain("handed off");
     expect(successCondition("must", "Book")).toContain("kept this promise");
   });
+
+  it("counts a promise that never came up as kept, like the live call criteria do", () => {
+    expect(successCondition("must", "Answer price questions")).toContain("never came up");
+    expect(successCondition("handoff", "x", { transferNumberSet: true })).toContain("never came up");
+  });
+
+  it("gives the judge the business facts so invented prices can be told from real ones", () => {
+    expect(successCondition("never", "Never invent prices", { facts: "Root canal: 6000" })).toContain("Root canal: 6000");
+    expect(successCondition("never", "Never invent prices")).not.toContain("Facts");
+  });
+
+  it("accepts a promised callback as the hand-off only when no transfer number is set", () => {
+    expect(successCondition("handoff", "Transfer to Dr. X", { transferNumberSet: false })).toContain("call them back");
+    expect(successCondition("handoff", "Transfer to Dr. X", { transferNumberSet: true })).not.toContain("call them back");
+  });
   it("pairs each persona with the promises of the kinds it targets", () => {
     const pairs = planPairs(ir);
     const pain = pairs.filter((p) => p.persona.id === "angry_patient_pain").map((p) => p.promise.id);

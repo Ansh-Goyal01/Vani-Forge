@@ -6,6 +6,8 @@ import {
   getCredits,
   getSignedUrl,
   listVoices,
+  missingPermission,
+  missingPermissionMessage,
 } from "../src/lib/eleven";
 import { smileDentalIR } from "../src/lib/fixtures/smile-dental";
 import { loadEnv, VARS } from "./env";
@@ -21,7 +23,8 @@ async function step<T>(name: string, fn: () => Promise<T>, detail: (v: T) => str
     console.log(`PASS  ${name}: ${detail(v)}`);
     return v;
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
+    const permission = missingPermission(err);
+    const msg = permission ? missingPermissionMessage(permission) : err instanceof Error ? err.message : String(err);
     results.push({ step: name, ok: false, detail: msg });
     console.log(`FAIL  ${name}: ${msg}`);
     return undefined;
@@ -32,13 +35,17 @@ async function main() {
   const missing = VARS.filter((v) => v.required && !process.env[v.name]?.trim()).map((v) => v.name);
   if (missing.includes("ELEVENLABS_API_KEY")) {
     console.log("FAIL  env: ELEVENLABS_API_KEY is missing. Add it to .env.local and run `npm run check-env`.");
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
   if (missing.length) console.log(`warn  env: ${missing.join(", ")} missing (Gemini is not used by smoke).`);
 
   const voices = await step("list voices", () => listVoices(), (v) => `${v.length} voices`);
   const voice = voices?.[0];
-  if (!voice) process.exit(1);
+  if (!voice) {
+    process.exitCode = 1;
+    return;
+  }
 
   const ir = smileDentalIR(voice.voiceId);
   const dict = await step(
@@ -61,7 +68,8 @@ async function main() {
 
   const failed = results.filter((r) => !r.ok).length;
   console.log(failed === 0 ? "\nSmoke passed." : `\nSmoke failed: ${failed} step(s).`);
-  process.exit(failed === 0 ? 0 : 1);
+  // exitCode, not process.exit(): exiting while fetch sockets close aborts Node on Windows.
+  process.exitCode = failed === 0 ? 0 : 1;
 }
 
 main();

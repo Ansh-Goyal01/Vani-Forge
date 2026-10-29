@@ -37,7 +37,7 @@ export function CreditsBadge() {
   const low = credits && credits.remaining !== null && !credits.guard.allowed;
   return (
     <div className="flex items-center gap-3">
-      <span className="label rule inline-flex items-center whitespace-nowrap rounded-card px-3 py-1.5 !text-[10px] sm:!text-[11px]" title={credits?.guard.reason}>
+      <span className="label rule inline-flex items-center whitespace-nowrap rounded-card px-3 py-1.5 !text-[10px] sm:!text-[11px]" title={credits?.error ?? credits?.guard.reason}>
         {low && <span aria-hidden className="mr-2 inline-block h-2 w-2 rounded-full bg-signal" />}
         {text}
       </span>

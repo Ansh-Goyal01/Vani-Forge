@@ -1,6 +1,6 @@
 # VERIFY: checks that need API keys
 
-Nothing below has been run: the build sandbox had no keys. Run in order. `npm run check-env` first.
+Run in order. `npm run check-env` first. Results of the first live run are at the end of this file.
 
 Budget: 30,000 credits (about 45 minutes of agent conversation). The code refuses live calls and audio chaos below 6,500 credits (demo-day reserve of about 10 minutes) unless you switch on "Override for demo" in the header. Costs below are estimates, not measurements; measure with the Credits badge after each step and write real numbers here.
 
@@ -42,3 +42,32 @@ Budget: 30,000 credits (about 45 minutes of agent conversation). The code refuse
 - `audio-chaos.ts`: initiation message and audio chunk framing follow the SDK's own client code, not yet run against the live socket. Voice label keys `gender` and `age` assumed.
 - Voice picker: use-case label key matched with `/use.?case/`.
 - The simulation-conversation endpoint is deprecated (removed 31 Oct 2026); this project uses agent tests instead.
+
+## Results: first live run, 29 Oct 2026
+
+Account: Creator tier, 161,000 credits at the start. Demo agent: `agent_8001m644z76tfp98qyf34f4nyw9n` (Smile Dental, now version 3). Measured with the credits badge, not estimated.
+
+| # | Check | Result |
+|---|-------|--------|
+| 1 | Keys present | PASS |
+| 2 | Smoke | PASS after two fixes: the first key lacked permissions (new key needed), and English agents need `eleven_flash_v2` (DECISIONS #71) |
+| 3, 4 | Gemini model, dental brief | PASS on `gemini-2.5-flash`: promise sheet, AI-disclosing first message, "Bhatnagar" in the lexicon |
+| 5 | Voice picker | PASS: 21 voices, use-case chips from API labels |
+| 6 | Create agent | PASS: 5 promises as evaluation criteria, pronunciation dictionary, English base + Hindi preset, end call + language detection |
+| 7 | Credits badge | PASS: `characterLimit - characterCount` matches the account (161,000 at the start) |
+| 8 | Mic to text | NOT RUN (needs a human at the mic) |
+| 9, 10, 11 | Live test call, interruption marker, mic denied | NOT RUN (needs a human at the mic) |
+| 12 | Refine "shorter and warmer" | PASS: v2 live with "Hi, I'm your AI assistant for Smile Dental. How can I help?" |
+| 13, 14 | Undo, form editor | NOT RUN live (unit-tested; same `agents.update` path as 12) |
+| 18 | Seed | NOT RUN (the demo agent above was built through the UI instead) |
+| 19 | Text tier in UI | PASS: both roles come back in `agentResponses`; the full run (4 callers x 3) took 51 s |
+| 20 | Heal | PASS: real quote, plain explanation, valid patch; owner promises untouched (DECISIONS #74) |
+| 21, 22 | Audio tier, TTS cache | PASS: WebSocket protocol and `pcm_16000` work; agent heard Hinglish (in Devanagari) and replied in Hindi; reruns reuse `data/audio` |
+| 23 | Audio tier in UI (all four callers) | NOT RUN (script used per caller instead) |
+| 24 | Fail, patch, pass | PASS (audio, elderly caller): `book_appointments` kept 0 of 1 on v2, heal set `turnEagerness: patient` + ignore "haan ji", kept 1 of 1 on v3. Caveat: k = 1, and pauses were still interrupted (DECISIONS #75) |
+| 25 | Share page | PASS: widget script loads and renders for the agent. A call through it was not placed |
+| 26 | Observe | PASS: audio-tier call listed with title, summary and all 5 promise scores |
+
+Measured costs: one full text tier (27 simulations) about 7,950 credits; one audio-tier caller (about 30-45 s) about 1,000-1,500 credits; smoke, compile, refine and heal 0 ElevenLabs credits. Total for this session: about 13,640 credits (147,359 left at the end; the badge lags a few minutes behind the runs).
+
+Still open: the fast talker fails `book_appointments` for real (the agent says "the team will call to confirm" instead of booking). Heal proposes a stricter booking step; it has not been applied, so it can be shown live.

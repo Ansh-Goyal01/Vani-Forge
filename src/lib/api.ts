@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
-import { ElevenConfigError } from "./eleven";
+import { ElevenConfigError, missingPermission, missingPermissionMessage } from "./eleven";
 import { LlmBusyError, LlmConfigError, LlmOutputError } from "./llm";
 import { PatchError } from "./patch";
 
@@ -25,7 +25,11 @@ export function fail(err: unknown): NextResponse {
     message = "Some details are missing or invalid: " + err.issues.map((i) => `${i.path.join(".")} ${i.message}`).join("; ");
   } else if (typeof err === "object" && err !== null && "statusCode" in err) {
     const code = Number((err as { statusCode?: number }).statusCode);
-    if (code === 401) message = "ElevenLabs did not accept the API key. Check ELEVENLABS_API_KEY in .env.local.";
+    const permission = missingPermission(err);
+    if (permission) {
+      needsKeys = true;
+      message = missingPermissionMessage(permission);
+    } else if (code === 401) message = "ElevenLabs did not accept the API key. Check ELEVENLABS_API_KEY in .env.local.";
     else if (code === 404) message = "ElevenLabs could not find that item.";
     else if (code === 422) message = "ElevenLabs rejected this agent setup. Open X-Ray for details.";
     else if (code === 429) message = "ElevenLabs is busy. Please try again in a few seconds.";

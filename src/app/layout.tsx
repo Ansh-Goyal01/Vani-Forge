@@ -16,7 +16,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
       </head>
-      <body>
+      {/* Browser extensions (e.g. Grammarly) add attributes to <body> before hydration. */}
+      <body suppressHydrationWarning>
         <a href="#main" className="label sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-card focus:p-3">Skip to content</a>
         <Header />
         <main id="main">{children}</main>

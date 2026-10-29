@@ -1,5 +1,14 @@
 import { compile } from "./compile";
-import { createAgent, createPronunciationDictionary, deleteAgent, elevenConfigured, getCredits, updateAgent } from "./eleven";
+import {
+  createAgent,
+  createPronunciationDictionary,
+  deleteAgent,
+  elevenConfigured,
+  getCredits,
+  missingPermission,
+  missingPermissionMessage,
+  updateAgent,
+} from "./eleven";
 import { sha256 } from "./hash";
 import * as store from "./store";
 import { addVersion, undo as undoHistory, undoTarget } from "./versions";
@@ -115,14 +124,15 @@ export async function getCreditStatus(): Promise<CreditStatus> {
       override: creditOverride,
       guard: evaluateCredits({ remaining: c.remaining, override: creditOverride }),
     };
-  } catch {
+  } catch (err) {
+    const permission = missingPermission(err);
     return {
       connected: false,
       remaining: null,
       limit: null,
       override: creditOverride,
       guard: evaluateCredits({ remaining: null, override: creditOverride }),
-      error: "Could not read the credit balance from ElevenLabs.",
+      error: permission ? missingPermissionMessage(permission) : "Could not read the credit balance from ElevenLabs.",
     };
   }
 }

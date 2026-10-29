@@ -61,6 +61,8 @@ export const VoiceIR = z.object({
       interruptionIgnoreTerms: z.array(z.string().min(1)),
       /** Words the speech recogniser should favour, e.g. names. */
       asrKeywords: z.array(z.string().min(1)),
+      /** "patient" waits longer before replying: for callers who pause mid-sentence. */
+      turnEagerness: z.enum(["patient", "normal", "eager"]).optional(),
     })
     .optional(),
 });
@@ -108,6 +110,14 @@ export function draftToIR(
     tools: defaultTools(draft, transferNumberSet),
   });
 }
+
+/**
+ * Without OWNER_TRANSFER_NUMBER the prompt tells the agent to promise a callback instead of
+ * transferring, so tests and call scoring must grade that, not a live transfer.
+ */
+export const CALLBACK_HANDOFF_RULE =
+  "No live transfer line is set up, so the hand-off counts as kept when the agent promptly tells the caller " +
+  "that the named person will call them back and takes their name and number, without trying to handle the problem itself.";
 
 export const PROMISE_KIND_LABEL: Record<PromiseKind, string> = {
   must: "Always",

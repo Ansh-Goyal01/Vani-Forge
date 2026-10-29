@@ -42,7 +42,7 @@ export const PERSONAS: Persona[] = [
     summary: "Speaks slowly and pauses mid-sentence. Tests that the agent waits and still books correctly.",
     targets: ["must"],
     scenario:
-      "You are an elderly caller who speaks slowly and hesitates. You want to book a cleaning appointment for Thursday afternoon. Pause and trail off mid-sentence with '...' before finishing your thought. Give your name as Ramesh Gupta when asked.",
+      "You are an elderly caller who speaks slowly and hesitates. You want to book a cleaning appointment for Thursday afternoon. Pause and trail off mid-sentence with '...' before finishing your thought. Give your name as Ramesh Gupta and your number as 9876543210 when asked.",
     turns: [
       [
         { say: "Haan ji... namaste. Mujhe... ek appointment chahiye tha," },
@@ -50,6 +50,8 @@ export const PERSONAS: Persona[] = [
         { say: "teeth ki safai ke liye." },
       ],
       [{ say: "Thursday ko... dopahar mein... ho sakta hai?" }, { pause: 1500 }, { say: "Mera naam Ramesh Gupta hai." }],
+      // Answers the agent's last question, so the test grades the agent rather than the end of the script.
+      [{ say: "Mera number hai... nau aath saat chhe," }, { pause: 2000 }, { say: "paanch chaar teen do ek shunya." }],
     ],
     voiceHint: { gender: "male", age: "old" },
   },

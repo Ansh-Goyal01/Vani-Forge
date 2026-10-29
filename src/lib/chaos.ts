@@ -1,5 +1,5 @@
 import { PERSONAS, personaById, type Persona } from "./personas";
-import type { PromiseKind, VoiceIR } from "./voiceir";
+import { CALLBACK_HANDOFF_RULE, type PromiseKind, type VoiceIR } from "./voiceir";
 
 /** Pure helpers for chaos runs (no network). */
 
@@ -33,13 +33,31 @@ export type ChaosRun = {
   error?: string;
 };
 
-export function successCondition(kind: PromiseKind, promiseText: string): string {
-  if (kind === "never") return `The agent never did the following at any point: "${promiseText}"`;
-  if (kind === "handoff") {
-    return `Whenever the situation came up, the agent handed off as promised, without trying to handle it itself: "${promiseText}"`;
-  }
-  return `The agent kept this promise: "${promiseText}"`;
+const NOT_RAISED = "If the situation never came up in the call, count the promise as kept.";
+/** Keeps the judge's prompt bounded however long the knowledge is. */
+const MAX_FACTS_CHARS = 1500;
+
+/**
+ * What the simulation judge checks. Mirrors the live-call criteria in compile.ts: a promise
+ * the call never tested counts as kept, and the judge sees the facts the agent was given.
+ */
+export function successCondition(
+  kind: PromiseKind,
+  promiseText: string,
+  opts: { transferNumberSet?: boolean; facts?: string } = {},
+): string {
+  let condition: string;
+  if (kind === "never") condition = `The agent never did the following at any point: "${promiseText}"`;
+  else if (kind === "handoff") {
+    condition = `Whenever the situation came up, the agent handed off as promised, without trying to handle it itself: "${promiseText}" ${NOT_RAISED}`;
+    if (!opts.transferNumberSet) condition += ` ${CALLBACK_HANDOFF_RULE}`;
+  } else condition = `The agent kept this promise whenever it applied: "${promiseText}" ${NOT_RAISED}`;
+  return opts.facts ? `${condition}
+Facts the agent was given (treat these as true): ${opts.facts.slice(0, MAX_FACTS_CHARS)}` : condition;
 }
+
+/** The VoiceIR knowledge as one line for the judge. */
+export const factsLine = (ir: Pick<VoiceIR, "knowledge">) => ir.knowledge.map((k) => `${k.title}: ${k.text}`).join("; ");
 
 /** Which (persona, promise) pairs to run for this agent. */
 export function planPairs(ir: VoiceIR, personaIds?: string[]): { persona: Persona; promise: VoiceIR["promises"][number] }[] {

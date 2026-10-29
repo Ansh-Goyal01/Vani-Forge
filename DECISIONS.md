@@ -107,3 +107,16 @@ Ambiguities in `CLAUDE.md` and the simplest reasonable call made for each. Newes
     - The ruler pins the last band at the bottom of the page.
     - A missing agent shows a recovery page with links back.
     - The phone call console is left-aligned and more compact.
+
+## First run with real keys (29 Oct 2026)
+
+70. **The API key must allow Agents, TTS, STT, Voices, Pronunciation Dictionaries and User.** A restricted key without them fails every call with `401 missing_permissions`. `fail()`, the credits badge and `npm run smoke` now name the missing permission and list what to enable (`REQUIRED_KEY_PERMISSIONS` in `eleven.ts`).
+71. **TTS model per language.** The live API rejects English agents on anything but `eleven_turbo_v2` / `eleven_flash_v2` ("English Agents must use turbo or flash v2"). English-primary agents get `eleven_flash_v2`; each other language's preset overrides `tts.modelId` with a multilingual model (`eleven_flash_v2_5`). Verified: the agent answered Hindi callers in Hindi.
+72. **Hand-offs without a transfer number are graded as a callback.** The prompt tells the agent to promise a callback when `OWNER_TRANSFER_NUMBER` is empty, so simulation conditions and live-call criteria both accept "the named person will call back, name and number taken" (`CALLBACK_HANDOFF_RULE`). Before, every run failed the hand-off promise by design.
+73. **Simulation conditions match the live-call criteria.** A promise the call never tested counts as kept (before: "inconclusive", counted as a fail), and the judge is given the agent's knowledge so it can tell real prices from invented ones.
+74. **Heal never rewords or removes the owner's promises.** The first live heal "fixed" a failed transfer by rewriting the promise to "offer a callback": a pass by moving the goalposts. Heal may now only append promises; `assertKeepsPromises` rejects anything else and the model is asked again.
+75. **New heal lever: `speech.turnEagerness`** (compiled to `turn.turnEagerness`), for callers who pause mid-sentence. Live result: on the elderly caller it went with a fail-to-pass on re-run, but the number of times the agent spoke into a pause did not drop (5 then 6), so it is not shown as an interruption fix.
+76. **The elderly caller answers the phone-number question** (a third scripted turn), so the audio test grades the agent, not the end of the script.
+77. **Heal's quoted evidence skips our `[the caller interrupted the agent]` markers**; only real agent words are quoted.
+78. **Scripts set `process.exitCode` instead of calling `process.exit()`**, which aborted Node 24 on Windows (`Assertion failed ... async.c`) while fetch sockets were closing.
+79. **`<body suppressHydrationWarning>`**: browser extensions such as Grammarly add attributes before hydration, which showed a red "1 Issue" badge in dev.

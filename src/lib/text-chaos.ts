@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { planPairs, successCondition, type ChaosItem, type ChaosRun } from "./chaos";
+import { factsLine, planPairs, successCondition, type ChaosItem, type ChaosRun } from "./chaos";
 import { createSimulationTest, runTests, waitForInvocation } from "./eleven";
 import { sha256 } from "./hash";
 import * as store from "./store";
@@ -24,7 +24,10 @@ export async function runTextChaos(agentId: string, ir: VoiceIR, opts: { persona
   const ids = await store.getTestIds(agentId);
   const testFor = new Map<string, (typeof pairs)[number]>();
   for (const pair of pairs) {
-    const condition = successCondition(pair.promise.kind, pair.promise.text);
+    const condition = successCondition(pair.promise.kind, pair.promise.text, {
+      transferNumberSet: Boolean(process.env.OWNER_TRANSFER_NUMBER?.trim()),
+      facts: factsLine(ir),
+    });
     const key = `${pair.persona.id}:${pair.promise.id}:${sha256(condition + pair.persona.scenario).slice(0, 10)}`;
     if (!ids[key]) {
       ids[key] = await createSimulationTest({

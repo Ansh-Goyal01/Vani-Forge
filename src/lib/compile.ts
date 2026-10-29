@@ -1,5 +1,5 @@
 import type { ElevenLabs } from "@elevenlabs/elevenlabs-js";
-import { DEFAULT_TTS_MODEL, PROMISE_KIND_LABEL, type VoiceIR } from "./voiceir";
+import { CALLBACK_HANDOFF_RULE, DEFAULT_TTS_MODEL, PROMISE_KIND_LABEL, type VoiceIR } from "./voiceir";
 
 /**
  * VoiceIR -> ElevenLabs agent config. Pure: no network, no env, no clock.
@@ -31,19 +31,26 @@ export const AGENT_TTS_MODELS = [
   "eleven_v4_turbo",
 ] as const satisfies readonly ElevenLabs.TtsConversationalModel[];
 
-/** Per ElevenLabs docs, English-only agents may use these; other languages need a multilingual model. TODO(verify) */
-const ENGLISH_ONLY_MODELS = new Set<string>(["eleven_turbo_v2", "eleven_flash_v2"]);
+/**
+ * The live API rejects other models for English with "English Agents must use turbo or flash v2",
+ * so English gets one of these and every other language gets a multilingual model.
+ */
+const ENGLISH_AGENT_MODELS = new Set<string>(["eleven_turbo_v2", "eleven_flash_v2"]);
+const ENGLISH_DEFAULT_MODEL = "eleven_flash_v2";
 
 export const MAX_CALL_SECONDS = 300;
 
-export function pickTtsModel(ir: Pick<VoiceIR, "languages" | "voice">): ElevenLabs.TtsConversationalModel {
+/** TTS model for one language of the agent (the primary one unless `language` is given). */
+export function pickTtsModel(
+  ir: Pick<VoiceIR, "languages" | "voice">,
+  language: VoiceIR["languages"][number] = ir.languages[0],
+): ElevenLabs.TtsConversationalModel {
   const wanted = ir.voice.ttsModel;
-  const allowed = (AGENT_TTS_MODELS as readonly string[]).includes(wanted);
-  const needsMultilingual = ir.languages.some((l) => l !== "en");
-  if (!allowed || (needsMultilingual && ENGLISH_ONLY_MODELS.has(wanted))) {
-    return DEFAULT_TTS_MODEL;
+  if (language === "en") {
+    return (ENGLISH_AGENT_MODELS.has(wanted) ? wanted : ENGLISH_DEFAULT_MODEL) as ElevenLabs.TtsConversationalModel;
   }
-  return wanted as ElevenLabs.TtsConversationalModel;
+  const known = (AGENT_TTS_MODELS as readonly string[]).includes(wanted);
+  return (known && !ENGLISH_AGENT_MODELS.has(wanted) ? wanted : DEFAULT_TTS_MODEL) as ElevenLabs.TtsConversationalModel;
 }
 
 const LANGUAGE_NAME = { en: "English", hi: "Hindi" } as const;
@@ -104,14 +111,15 @@ export function criterionId(promiseId: string): string {
   return promiseId.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "") || "promise";
 }
 
-export function buildEvaluationCriteria(ir: VoiceIR): ElevenLabs.PromptEvaluationCriteria[] {
+export function buildEvaluationCriteria(ir: VoiceIR, opts: CompileOptions = {}): ElevenLabs.PromptEvaluationCriteria[] {
   return ir.promises.map((p) => {
     const goal =
       p.kind === "must"
         ? `The agent kept this promise during the call, or the call never required it: "${p.text}"`
         : p.kind === "never"
           ? `The agent never did the following at any point in the call: "${p.text}"`
-          : `Whenever the situation came up, the agent handed off as promised: "${p.text}" If the situation never came up, count it as success.`;
+          : `Whenever the situation came up, the agent handed off as promised: "${p.text}" If the situation never came up, count it as success.` +
+            (opts.transferNumber ? "" : ` ${CALLBACK_HANDOFF_RULE}`);
     return {
       id: criterionId(p.id),
       name: `${PROMISE_KIND_LABEL[p.kind]}: ${p.text}`.slice(0, 80),
@@ -149,12 +157,25 @@ export function buildBuiltInTools(ir: VoiceIR, opts: CompileOptions): ElevenLabs
   return tools;
 }
 
+/** Turn-taking settings from VoiceIR.speech; undefined when nothing is set. */
+export function buildTurn(ir: VoiceIR): ElevenLabs.TurnConfig | undefined {
+  const terms = ir.speech?.interruptionIgnoreTerms ?? [];
+  const eagerness = ir.speech?.turnEagerness;
+  if (terms.length === 0 && !eagerness) return undefined;
+  return {
+    ...(terms.length > 0 ? { interruptionIgnoreTerms: terms, mergeWithDefaultIgnoreTerms: true } : {}),
+    ...(eagerness ? { turnEagerness: eagerness } : {}),
+  };
+}
+
 export function compile(ir: VoiceIR, opts: CompileOptions = {}): AgentPayload {
   const [primary, ...others] = ir.languages;
   const locators = opts.pronunciationDictionaryLocators ?? [];
 
   const languagePresets: Record<string, ElevenLabs.LanguagePresetOutput> = {};
-  for (const lang of others) languagePresets[lang] = { overrides: { agent: { language: lang } } };
+  for (const lang of others) {
+    languagePresets[lang] = { overrides: { agent: { language: lang }, tts: { modelId: pickTtsModel(ir, lang) } } };
+  }
 
   const conversationConfig: ElevenLabs.ConversationalConfig = {
     agent: {
@@ -175,9 +196,7 @@ export function compile(ir: VoiceIR, opts: CompileOptions = {}): AgentPayload {
       userInputAudioFormat: "pcm_16000",
       ...((ir.speech?.asrKeywords.length ?? 0) > 0 ? { keywords: ir.speech!.asrKeywords } : {}),
     },
-    ...((ir.speech?.interruptionIgnoreTerms.length ?? 0) > 0
-      ? { turn: { interruptionIgnoreTerms: ir.speech!.interruptionIgnoreTerms, mergeWithDefaultIgnoreTerms: true } }
-      : {}),
+    ...(buildTurn(ir) ? { turn: buildTurn(ir) } : {}),
     conversation: {
       maxDurationSeconds: MAX_CALL_SECONDS,
       clientEvents: [
@@ -196,6 +215,6 @@ export function compile(ir: VoiceIR, opts: CompileOptions = {}): AgentPayload {
   return {
     name: `${ir.business.name} - VaniForge`,
     conversationConfig,
-    platformSettings: { evaluation: { criteria: buildEvaluationCriteria(ir) } },
+    platformSettings: { evaluation: { criteria: buildEvaluationCriteria(ir, opts) } },
   };
 }

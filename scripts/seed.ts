@@ -12,7 +12,8 @@ loadEnv();
 async function main() {
   if (!process.env.ELEVENLABS_API_KEY) {
     console.log("ELEVENLABS_API_KEY is missing. Run `npm run check-env`.");
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
   const credits = await getCreditStatus();
   console.log(`Credits left: ${credits.remaining ?? "unknown"}`);
@@ -37,5 +38,5 @@ async function main() {
 
 main().catch((e) => {
   console.error("seed failed:", e instanceof Error ? e.message : e);
-  process.exit(1);
+  process.exitCode = 1;
 });

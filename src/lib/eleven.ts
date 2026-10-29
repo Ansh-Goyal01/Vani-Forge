@@ -13,6 +13,32 @@ export function elevenConfigured(): boolean {
   return Boolean(process.env.ELEVENLABS_API_KEY);
 }
 
+/** What a restricted ElevenLabs key must allow for every feature here (names as shown on the key settings page). */
+export const REQUIRED_KEY_PERMISSIONS = [
+  "ElevenLabs Agents: Write",
+  "Text to Speech: Access",
+  "Speech to Text: Access",
+  "Voices: Read",
+  "Pronunciation Dictionaries: Write",
+  "User: Read",
+];
+
+/** The permission a 401 says the key lacks (e.g. "voices_read"), if that is the cause. */
+export function missingPermission(err: unknown): string | undefined {
+  if (typeof err !== "object" || err === null) return undefined;
+  const detail = (err as { body?: { detail?: { status?: string; message?: string } } }).body?.detail;
+  if (detail?.status !== "missing_permissions") return undefined;
+  return /permission (\w+)/.exec(detail.message ?? "")?.[1] ?? "unknown";
+}
+
+export function missingPermissionMessage(permission: string): string {
+  return (
+    `Your ElevenLabs API key is missing the "${permission}" permission. ` +
+    `Create a new key (ElevenLabs > Developers > API keys) that allows: ${REQUIRED_KEY_PERMISSIONS.join(", ")}. ` +
+    "Paste it into .env.local and restart the app."
+  );
+}
+
 function client(): ElevenLabsClient {
   const apiKey = process.env.ELEVENLABS_API_KEY;
   if (!apiKey) throw new ElevenConfigError("ELEVENLABS_API_KEY is not set. Add it to .env.local.");

@@ -26,14 +26,37 @@ describe("heal", () => {
   it("returns the quoted evidence, an explanation and a patch that applies", async () => {
     gen.mockResolvedValue({
       evidence: "take a paracetamol",
-      explanation: "The agent gave medical advice instead of transferring.",
-      summary: "Make the pain hand-off stricter",
-      ops: [{ op: "replace", path: "/promises/3/text", valueJson: JSON.stringify("At the first mention of pain, say you are connecting them and transfer. Do not suggest any medicine.") }],
+      explanation: "The agent gave medical advice instead of handing off.",
+      summary: "Add a stricter pain rule",
+      ops: [{ op: "add", path: "/promises/-", valueJson: JSON.stringify({ id: "pain_first", kind: "never", text: "Never suggest any medicine to a caller in pain." }) }],
     });
     const p = await proposeHeal(ir, run, "angry_patient_pain", "pain_to_owner");
     expect(p.evidence).toBe("take a paracetamol");
-    expect(p.changes[0].label).toBe("Promise wording");
-    expect(applyOps(ir, p.ops).promises[3].text).toContain("Do not suggest any medicine");
+    expect(applyOps(ir, p.ops).promises.at(-1)?.text).toContain("Never suggest any medicine");
+  });
+
+  it("never rewords or removes the owner's promises: asks again, then accepts a real fix", async () => {
+    gen
+      .mockResolvedValueOnce({ evidence: "", explanation: "x", summary: "y", ops: [{ op: "replace", path: "/promises/3/text", valueJson: '"Offer a callback."' }] })
+      .mockResolvedValueOnce({ evidence: "", explanation: "x", summary: "y", ops: [{ op: "replace", path: "/states/0/goal", valueJson: '"Hand off at the first mention of pain."' }] });
+    const p = await proposeHeal(ir, run, "angry_patient_pain", "pain_to_owner");
+    expect(gen).toHaveBeenCalledTimes(2);
+    expect(String(gen.mock.calls[1][0].prompt)).toContain("own words");
+    expect(p.ops[0].path).toBe("/states/0/goal");
+  });
+
+  it("refuses to remove an owner's promise", async () => {
+    gen.mockResolvedValue({ evidence: "", explanation: "x", summary: "y", ops: [{ op: "remove", path: "/promises/0" }] });
+    await expect(proposeHeal(ir, run, "angry_patient_pain", "pain_to_owner")).rejects.toThrow("safe fix");
+  });
+
+  it("can make the agent wait for callers who pause", async () => {
+    gen.mockResolvedValue({
+      evidence: "", explanation: "x", summary: "y",
+      ops: [{ op: "add", path: "/speech", valueJson: JSON.stringify({ interruptionIgnoreTerms: [], asrKeywords: [], turnEagerness: "patient" }) }],
+    });
+    const p = await proposeHeal(ir, run, "angry_patient_pain", "pain_to_owner");
+    expect(applyOps(ir, p.ops).speech?.turnEagerness).toBe("patient");
   });
 
   it("replaces a made-up quote with the agent's real last line", async () => {
@@ -50,6 +73,15 @@ describe("heal", () => {
     gen.mockResolvedValue({ evidence: "", explanation: "x", summary: "y", ops: [{ op: "replace", path: "/nope", valueJson: '"a"' }] });
     await expect(proposeHeal(ir, run, "angry_patient_pain", "pain_to_owner")).rejects.toThrow("safe fix");
     expect(gen).toHaveBeenCalledTimes(2);
+  });
+
+  it("never quotes our own interruption markers as the agent's words", async () => {
+    const marked: ChaosRun = { ...run, items: [{ ...run.items[0], samples: [{ passed: false, transcript: [
+      { role: "agent", text: "Your number is noted." },
+      { role: "agent", text: "[the caller interrupted the agent]" },
+    ] }] }] };
+    gen.mockResolvedValue({ evidence: "[the caller interrupted the agent]", explanation: "x", summary: "y", ops: [{ op: "replace", path: "/states/0/goal", valueJson: '"Wait."' }] });
+    expect((await proposeHeal(ir, marked, "angry_patient_pain", "pain_to_owner")).evidence).toBe("Your number is noted.");
   });
 
   it("refuses when the run has no failure for that pair", async () => {

@@ -4,7 +4,9 @@ A web studio where a business owner describes a voice agent in plain English or 
 
 Built for Build Arena 2026, problem statement 2 (Team Short Circuit). Hero use case: **Smile Dental, Noida** (fictional).
 
-> Nothing here has been run against live ElevenLabs or Gemini yet: the build environment had no keys. All unit tests pass without keys; everything that needs keys is listed in [`VERIFY.md`](VERIFY.md).
+> First run against live ElevenLabs and Gemini on 29 Oct 2026: see the results section of [`VERIFY.md`](VERIFY.md) for what was checked, what was not, and what it cost. All unit tests pass without keys.
+>
+> The ElevenLabs key must allow: ElevenLabs Agents (Write), Text to Speech, Speech to Text, Voices (Read), Pronunciation Dictionaries (Write), User (Read). Otherwise every call fails with `missing_permissions`, and the app says which permission is missing.
 
 ## Setup
 
