@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Notice, api } from "../ui";
 
+const RETRY_DELAY_MS = 1500;
+
 type Voice = { voiceId: string; name: string; previewUrl?: string; labels: Record<string, string>; description?: string };
 
 /** Voice list with preview playback and a use-case filter built from the labels the API returns. */
@@ -13,11 +15,30 @@ export function VoicePicker({ value, onChange }: { value: string; onChange: (id:
   const [playing, setPlaying] = useState<string | null>(null);
   const audio = useRef<HTMLAudioElement | null>(null);
 
+  const [reloadKey, setReloadKey] = useState(0);
+
+  // One quiet retry covers a blip (e.g. the dev server still compiling); after that the owner gets a button.
   useEffect(() => {
-    api<{ voices: Voice[] }>("/api/voices")
-      .then((r) => setVoices(r.voices))
-      .catch((e: Error) => setError({ message: e.message, keys: /KEY|key/.test(e.message) }));
-  }, []);
+    let cancelled = false;
+    const isKeyProblem = (e: Error) => /KEY|key/.test(e.message);
+    const get = () => api<{ voices: Voice[] }>("/api/voices");
+    get()
+      .catch((e: Error) => {
+        if (isKeyProblem(e)) throw e;
+        return new Promise((r) => setTimeout(r, RETRY_DELAY_MS)).then(get);
+      })
+      .then((r) => !cancelled && setVoices(r.voices))
+      .catch((e: Error) => !cancelled && setError({ message: e.message, keys: isKeyProblem(e) }));
+    return () => {
+      cancelled = true;
+    };
+  }, [reloadKey]);
+
+  function retry() {
+    setError(null);
+    setVoices(null);
+    setReloadKey((k) => k + 1);
+  }
 
   const useCases = useMemo(() => {
     const set = new Set<string>();
@@ -43,7 +64,18 @@ export function VoicePicker({ value, onChange }: { value: string; onChange: (id:
     setPlaying(v.voiceId);
   }
 
-  if (error) return <Notice tone={error.keys ? "keys" : "error"}>{error.message} Voices are not connected yet.</Notice>;
+  if (error) {
+    return (
+      <div className="flex flex-wrap items-start gap-3">
+        <div className="min-w-0 flex-1">
+          <Notice tone={error.keys ? "keys" : "error"}>{error.message} Voices are not connected yet.</Notice>
+        </div>
+        <button type="button" onClick={retry} className="label rule rounded-card px-4 py-3">
+          Try again
+        </button>
+      </div>
+    );
+  }
   if (!voices) return <p className="label text-mute">Loading voices...</p>;
   if (voices.length === 0) return <Notice>ElevenLabs returned no voices for this account.</Notice>;
 
