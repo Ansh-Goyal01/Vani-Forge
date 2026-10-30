@@ -1,5 +1,3 @@
-import { SectionNumber } from "./ui";
-
 /** Every ElevenLabs capability the code uses, and where. Mirrors the README table. */
 const ROWS: [string, string, string][] = [
   ["Agents API", "Write, Refine, Heal", "creates and updates the agent on every new VoiceIR version"],
@@ -18,41 +16,44 @@ const ROWS: [string, string, string][] = [
   ["Subscription", "Header", "credit balance and the guard that protects the demo reserve"],
 ];
 
+/** A compact "built on" band; the full where-and-why table is one click away for anyone who wants it. */
 export function ElevenInside() {
   return (
-    <section id="eleven" data-band="1000" data-title="ElevenLabs inside" aria-labelledby="eleven-title" className="scroll-mt-28 py-20">
+    <section id="eleven" data-band="1000" data-title="ElevenLabs inside" aria-labelledby="eleven-title" className="scroll-mt-28 py-12">
       <div className="wrap">
-        <div className="reveal flex flex-wrap items-start gap-x-8 gap-y-3">
-          <SectionNumber n="04" />
-          <div className="max-w-4xl pt-1">
-            <h2 id="eleven-title" className="text-[clamp(2rem,4.6vw,4rem)]">
-              {ROWS.length} ElevenLabs capabilities, each with a job.
-            </h2>
-            <p className="mt-3 text-[17px] text-mute">
-              <strong className="font-semibold text-ink">Where it runs:</strong> ElevenLabs is the voice and agent layer for every step, from the first spoken brief to the last scored call.
-            </p>
+        <div className="reveal panel-dark on-dark p-7 sm:p-10">
+          <div className="grid gap-7 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.6fr)] lg:gap-12">
+            <div>
+              <p className="label text-signal">Built on ElevenLabs · {ROWS.length} capabilities</p>
+              <h2 id="eleven-title" className="mt-3 text-[clamp(1.6rem,2.6vw,2.25rem)] leading-tight text-paper">
+                One voice layer, from the first spoken brief to the last scored call.
+              </h2>
+            </div>
+            <ul className="flex flex-wrap content-start gap-2" aria-label="ElevenLabs capabilities used">
+              {ROWS.map(([cap]) => (
+                <li key={cap} className="label rounded-card border border-paper/25 px-3 py-2 text-paper/85">
+                  {cap}
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
 
-        <div className="reveal mt-12 overflow-hidden rounded-card border-[1.5px] border-ink bg-card" style={{ "--d": 1 } as React.CSSProperties}>
-          <div className="label hidden grid-cols-[1.1fr_0.9fr_2fr] gap-6 border-b-[1.5px] border-ink px-5 py-3 font-bold text-problem md:grid">
-            <span>Capability</span>
-            <span>Where</span>
-            <span>Job in VaniForge</span>
-          </div>
-          <ul>
-            {ROWS.map(([cap, where, job], i) => (
-              <li
-                key={cap}
-                className="reveal grid gap-1 border-b border-ink/15 px-5 py-3.5 transition-colors last:border-b-0 hover:bg-paper md:grid-cols-[1.1fr_0.9fr_2fr] md:gap-6"
-                style={{ "--d": Math.min(i, 8) } as React.CSSProperties}
-              >
-                <span className="font-semibold">{cap}</span>
-                <span className="label self-center text-mute">{where}</span>
-                <span className="text-[15px]">{job}</span>
-              </li>
-            ))}
-          </ul>
+          <details className="group mt-8 border-t border-paper/15 pt-5">
+            <summary className="label flex cursor-pointer list-none items-center gap-2 text-signal [&::-webkit-details-marker]:hidden">
+              <span aria-hidden className="inline-block w-3 text-center group-open:hidden">+</span>
+              <span aria-hidden className="hidden w-3 text-center group-open:inline">−</span>
+              Where each one runs
+            </summary>
+            <ul className="mt-4">
+              {ROWS.map(([cap, where, job]) => (
+                <li key={cap} className="grid gap-1 border-b border-paper/10 py-3 last:border-b-0 md:grid-cols-[1.1fr_0.9fr_2fr] md:gap-6">
+                  <span className="font-semibold text-paper">{cap}</span>
+                  <span className="label self-center text-paper/60">{where}</span>
+                  <span className="text-[15px] text-paper/80">{job}</span>
+                </li>
+              ))}
+            </ul>
+          </details>
         </div>
       </div>
     </section>

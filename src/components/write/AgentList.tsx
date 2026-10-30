@@ -19,7 +19,7 @@ export function AgentList() {
   return (
     <section>
       <div className="reveal flex flex-wrap items-start gap-x-8 gap-y-3">
-        <SectionNumber n="06" />
+        <SectionNumber n="05" />
         <div className="pt-1">
           <h2 id="agents-title" className="text-[clamp(2rem,4.6vw,4rem)]">Your agents</h2>
           <p className="mt-3 text-[17px] text-mute">Agents created on this computer. Open one to test, refine, break and deploy it.</p>

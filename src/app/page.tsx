@@ -25,7 +25,7 @@ export default function Home() {
       <ElevenInside />
       <section id="start" data-band="2000" data-title="Build" aria-labelledby="start-title" className="wrap scroll-mt-28 py-20">
         <div className="reveal mb-10 flex flex-wrap items-start gap-x-8 gap-y-3">
-          <SectionNumber n="05" />
+          <SectionNumber n="04" />
           <div className="max-w-3xl pt-1">
             <h2 id="start-title" className="text-[clamp(2rem,4.6vw,4rem)]">Now build yours.</h2>
             <p className="mt-3 text-[17px] text-mute">
