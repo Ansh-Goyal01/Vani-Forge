@@ -5,6 +5,7 @@ import { compareRuns, keptLabel, rollupByPromise, tally, type ChaosRun, type Tal
 import type { HealProposal } from "@/lib/heal";
 import { useCredits } from "../CreditsBadge";
 import { Check, Notice, XRay, api } from "../ui";
+import { BreakItYourself } from "./BreakItYourself";
 import type { AgentState } from "./Studio";
 
 type PersonaInfo = { id: string; name: string; summary: string };
@@ -21,6 +22,7 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
   const [error, setError] = useState<string | null>(null);
   const [proposal, setProposal] = useState<{ runId: string; p: HealProposal } | null>(null);
   const [healed, setHealed] = useState<Healed[]>([]);
+  const [liveRevealed, setLiveRevealed] = useState(false);
 
   useEffect(() => {
     api<{ personas: PersonaInfo[]; runs: ChaosRun[] }>(`/api/chaos?agentId=${agentId}`)
@@ -111,6 +113,7 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
 
   const promiseText = (id: string) => state.ir.promises.find((p) => p.id === id)?.text ?? id;
   const blocked = credits ? !credits.guard.allowed : false;
+  const showLive = latest("audio") !== null || liveRevealed;
 
   return (
     <div className="space-y-8">
@@ -208,6 +211,16 @@ export function ChaosTab({ agentId, state, onState }: { agentId: string; state: 
           )}
         </section>
       )}
+
+      {runs !== null &&
+        (showLive ? (
+          <BreakItYourself agentId={agentId} ir={state.ir} />
+        ) : (
+          <p className="label text-mute">
+            After the audio test, you can try to break the agent yourself on a live call.{" "}
+            <button type="button" className="underline" onClick={() => setLiveRevealed(true)}>Try it now instead</button>
+          </p>
+        ))}
     </div>
   );
 }
