@@ -10,12 +10,14 @@ const LINKS = [
   ["Home", "/"],
   ["How it works", "/#how"],
   ["Testing", "/#proof"],
+  ["Build", "/build"],
   ["Your agents", "/#agents"],
 ] as const;
 
 /** Where the orange marker sits on the ruler for each part of the app (decorative). */
 function band(pathname: string): { hz: number; title: string } {
   if (pathname.startsWith("/studio")) return { hz: 2000, title: "STUDIO" };
+  if (pathname.startsWith("/build")) return { hz: 1000, title: "BUILD" };
   if (pathname.startsWith("/a/")) return { hz: 4000, title: "TEST PAGE" };
   return { hz: 63, title: "HOME" };
 }

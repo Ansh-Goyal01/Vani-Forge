@@ -12,6 +12,7 @@ export function Footer() {
           {[
             ["How it works", "/#how"],
             ["Testing", "/#proof"],
+            ["Build", "/build"],
             ["Your agents", "/#agents"],
           ].map(([l, h]) => (
             <Link key={l} href={h} className="label text-mute underline-offset-8 hover:text-ink hover:underline">{l}</Link>

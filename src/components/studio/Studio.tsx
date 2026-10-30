@@ -41,7 +41,7 @@ export function Studio({ agentId }: { agentId: string }) {
         <Notice tone="error">{error}</Notice>
         <div className="flex flex-wrap gap-3">
           <Link href="/#agents" className="btn btn-primary">Your agents <span aria-hidden className="arrow">→</span></Link>
-          <Link href="/#start" className="btn">Build a new one</Link>
+          <Link href="/build" className="btn">Build a new one</Link>
         </div>
       </div>
     );
