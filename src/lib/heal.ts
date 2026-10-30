@@ -57,7 +57,7 @@ function transcriptText(sample: Sample): string {
 export async function proposeHeal(ir: VoiceIR, run: ChaosRun, personaId: string, promiseId: string): Promise<HealProposal> {
   const sample = firstFailure(run, personaId, promiseId);
   const promise = ir.promises.find((p) => p.id === promiseId);
-  const persona = personaById(personaId);
+  const persona = personaById(ir, personaId);
   if (!sample || !promise || !persona) throw new PatchError("We could not find that failed run to fix.");
 
   const base = `VoiceIR:\n${JSON.stringify(ir, null, 2)}\n\nBroken promise (${promise.kind}): "${promise.text}" (id ${promise.id})\nTest caller: ${persona.name}: ${persona.summary}\n\nTranscript:\n${transcriptText(sample)}`;
@@ -77,7 +77,7 @@ export async function proposeHeal(ir: VoiceIR, run: ChaosRun, personaId: string,
       return {
         promiseId,
         personaId,
-        personaName: personaName(personaId),
+        personaName: personaName(ir, personaId),
         promiseText: promise.text,
         evidence,
         explanation: res.explanation,

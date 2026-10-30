@@ -1,4 +1,4 @@
-import { PERSONAS, personaById, type Persona } from "./personas";
+import { personaById, personasFor, type Persona } from "./personas";
 import { CALLBACK_HANDOFF_RULE, type PromiseKind, type VoiceIR } from "./voiceir";
 
 /** Pure helpers for chaos runs (no network). */
@@ -61,7 +61,7 @@ export const factsLine = (ir: Pick<VoiceIR, "knowledge">) => ir.knowledge.map((k
 
 /** Which (persona, promise) pairs to run for this agent. */
 export function planPairs(ir: VoiceIR, personaIds?: string[]): { persona: Persona; promise: VoiceIR["promises"][number] }[] {
-  const personas = PERSONAS.filter((p) => !personaIds || personaIds.includes(p.id));
+  const personas = personasFor(ir).filter((p) => !personaIds || personaIds.includes(p.id));
   return personas.flatMap((persona) =>
     ir.promises.filter((promise) => persona.targets.includes(promise.kind)).map((promise) => ({ persona, promise })),
   );
@@ -95,7 +95,7 @@ export function firstFailure(run: ChaosRun, personaId: string, promiseId: string
   return run.items.find((i) => i.personaId === personaId && i.promiseId === promiseId)?.samples.find((s) => !s.passed && !s.unscored) ?? null;
 }
 
-export const personaName = (id: string) => personaById(id)?.name ?? id;
+export const personaName = (ir: VoiceIR, id: string) => personaById(ir, id)?.name ?? id;
 
 /** Before/after for one persona+promise after a heal. */
 export function compareRuns(before: ChaosRun, after: ChaosRun, personaId: string, promiseId: string) {

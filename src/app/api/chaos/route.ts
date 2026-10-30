@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { fail } from "@/lib/api";
-import { PERSONAS } from "@/lib/personas";
+import { personasFor } from "@/lib/personas";
 import { runAudioChaos } from "@/lib/audio-chaos";
 import { getAgentState, getCreditStatus } from "@/lib/service";
 import { listRuns, safeId } from "@/lib/store";
@@ -18,12 +18,14 @@ const Body = z.object({
   k: z.number().int().min(1).max(5).optional(),
 });
 
-/** Past runs plus the persona list. */
+/** Past runs plus this agent's callers. */
 export async function GET(req: Request) {
   try {
     const agentId = safeId(new URL(req.url).searchParams.get("agentId") ?? "");
+    const state = await getAgentState(agentId);
+    if (!state) return NextResponse.json({ error: "We could not find that agent." }, { status: 404 });
     return NextResponse.json({
-      personas: PERSONAS.map(({ id, name, summary, targets }) => ({ id, name, summary, targets })),
+      personas: personasFor(state.ir).map(({ id, name, summary, targets }) => ({ id, name, summary, targets })),
       runs: await listRuns(agentId),
       textK: TEXT_K,
     });

@@ -1,6 +1,6 @@
 import { runAudioChaos } from "../src/lib/audio-chaos";
 import { keptLabel, personaName, tally } from "../src/lib/chaos";
-import { PERSONAS } from "../src/lib/personas";
+import { PERSONA_IDS } from "../src/lib/personas";
 import { getCreditStatus, getAgentState } from "../src/lib/service";
 import { loadEnv } from "./env";
 
@@ -11,7 +11,7 @@ loadEnv();
 async function main() {
   const [agentId, ...personaIds] = process.argv.slice(2);
   if (!agentId) {
-    console.log(`Usage: npm run audio-chaos -- <agentId> [personaId ...]\nPersonas: ${PERSONAS.map((p) => p.id).join(", ")}`);
+    console.log(`Usage: npm run audio-chaos -- <agentId> [personaId ...]\nPersonas: ${PERSONA_IDS.join(", ")}`);
     process.exitCode = 1;
     return;
   }
@@ -31,7 +31,7 @@ async function main() {
   console.log(`Run ${run.runId} (version ${run.version})`);
   for (const item of run.items) {
     const s = item.samples[0];
-    console.log(`\n${personaName(item.personaId)} / ${item.promiseId}: ${s.unscored ? "no score" : keptLabel(tally(item))}`);
+    console.log(`\n${personaName(state.ir, item.personaId)} / ${item.promiseId}: ${s.unscored ? "no score" : keptLabel(tally(item))}`);
     for (const h of s.heard ?? []) console.log(`  caller said: ${h.said}\n  agent heard: ${h.heard || "(nothing)"}`);
     if (s.rationale) console.log(`  note: ${s.rationale}`);
   }

@@ -1,4 +1,4 @@
-import { PERSONAS } from "@/lib/personas";
+import { PERSONA_LABELS } from "@/lib/personas";
 import { SectionNumber } from "./ui";
 
 const STEPS = [
@@ -12,7 +12,7 @@ const STEPS = [
     tag: "F2",
     title: "Break it before customers do",
     body: "Four difficult callers test your agent on purpose. When it breaks a promise you see the exact line, a plain explanation and a fix to approve.",
-    spec: "callers: " + PERSONAS.map((p) => p.name.toLowerCase()).join(" · "),
+    spec: "callers: " + PERSONA_LABELS.map((n) => n.toLowerCase()).join(" · "),
   },
   {
     tag: "F3",
